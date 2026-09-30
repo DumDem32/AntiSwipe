@@ -100,7 +100,7 @@ function makeCard(id){
  d.o.forEach((x,i)=>{const b=document.createElement("button");b.className="option";b.textContent=x;b.onclick=()=>{[...opts.children].forEach(v=>v.classList.remove("selected"));b.classList.add("selected");if(d.a===null||i===d.a){result.textContent=d.a===null?"Nice choice 😎":"✅ Correct!";streak++;streakEl.textContent="🔥 "+streak}else result.textContent="❌ Not quite — keep going!"};opts.appendChild(b)});
  card.appendChild(inner);feed.appendChild(card);
 }
- function addBatch(){for(let i=0;i<50 && nextId<TOTAL;i++){makeCard(nextId++);}countEl.textContent=`Challenges loaded: ${nextId.toLocaleString()} / ${TOTAL.toLocaleString()}` 
+ function addBatch(){for(let i=0;i<50 && nextId<TOTAL;i++){makeCard(nextId++);}countEl.textContent=`Challenge ${Math.max(1,nextId-5).toLocaleString()}–${nextId.toLocaleString()} / ${TOTAL.toLocaleString()}` 
 addBatch();
 window.addEventListener("scroll",()=>{if(window.innerHeight+window.scrollY>=document.body.offsetHeight-2000&&nextId<TOTAL)addBatch()});
 </script>
