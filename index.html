@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#090909">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Swipe Break">
+<title>Swipe Break</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#080808;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;height:100%;overflow:hidden}
+body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+header{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-weight:800}
+#feed{height:calc(100% - 58px);overflow-y:auto;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch}
+.card{height:100%;min-height:520px;scroll-snap-align:start;display:flex;align-items:center;justify-content:center;padding:24px}
+.inner{width:min(520px,100%);background:#171717;border:1px solid #2b2b2b;border-radius:28px;padding:30px 22px;text-align:center}
+.emoji{font-size:64px}.type{font-size:13px;color:#999;text-transform:uppercase;letter-spacing:1.2px;margin-top:12px}.title{font-size:28px;font-weight:850;line-height:1.12;margin-top:10px}.hint{color:#aaa;margin:10px 0 18px;line-height:1.4}
+.options{display:grid;gap:10px}.option,.submit,.next{width:100%;padding:14px;border-radius:15px;border:1px solid #333;background:#222;color:#fff;font-size:16px;font-weight:700}.option.selected{outline:2px solid #fff;background:#303030}.submit,.next{background:#fff;color:#111;border:0;margin-top:12px}.result{min-height:22px;margin-top:12px;font-weight:700}.streak{font-size:15px;color:#aaa}
+.swipe{position:fixed;bottom:12px;left:0;right:0;text-align:center;color:#777;font-size:12px;pointer-events:none}
+</style>
+</head>
+<body>
+<header><div>Swipe Break</div><div id="streak">🔥 0</div></header>
+<div id="feed"></div>
+<div class="swipe">↑ swipe for another challenge</div>
+<script>
+const data=[
+{e:"🧠",t:"Trivia",q:"Which planet is known as the Red Planet?",o:["Venus","Mars","Jupiter","Mercury"],a:1},
+{e:"🔢",t:"Number Puzzle",q:"What comes next? 3, 6, 12, 24, ?",o:["30","36","48","50"],a:2},
+{e:"🎮",t:"Gaming",q:"Which game features Creepers?",o:["Roblox","Minecraft","Fortnite","Terraria"],a:1},
+{e:"🌎",t:"Geography",q:"Which country is shaped roughly like a boot?",o:["Spain","Italy","Greece","Chile"],a:1},
+{e:"🦖",t:"Science",q:"Which animal is the largest living land animal?",o:["Giraffe","Elephant","Rhino","Hippo"],a:1},
+{e:"🎬",t:"Movies",q:"Which superhero is also known as the Dark Knight?",o:["Iron Man","Batman","Superman","Thor"],a:1},
+{e:"🧩",t:"Logic",q:"You have 3 apples and take away 2. How many do you have?",o:["1","2","3","0"],a:1},
+{e:"💰",t:"Math",q:"What is 15 × 4?",o:["45","50","60","75"],a:2},
+{e:"🐙",t:"Animals",q:"How many hearts does an octopus have?",o:["1","2","3","8"],a:2},
+{e:"🏰",t:"History",q:"Which ancient civilization built the pyramids at Giza?",o:["Romans","Egyptians","Vikings","Greeks"],a:1},
+{e:"👀",t:"Look Around",q:"Look around. Find something that is red. Ready?",o:["Found it","I see two","Can't find one"],a:null},
+{e:"🔤",t:"Word Puzzle",q:"Unscramble: 'RTAE'",o:["RATE","TEAR","Both A & B","TARE"],a:2},
+{e:"🧠",t:"Memory",q:"Remember these: 🍎 🐸 ⭐ 🚗. Which one was third?",o:["🍎","🐸","⭐","🚗"],a:2},
+{e:"🎲",t:"Prediction",q:"Pick a number from 1–10. The app's random number is...",o:["1–3","4–6","7–8","9–10"],a:null},
+{e:"😂",t:"Fun",q:"Which one is NOT a real animal?",o:["Axolotl","Capybara","Dragon","Quokka"],a:2},
+{e:"📚",t:"Books",q:"How many letters are in the English alphabet?",o:["24","25","26","27"],a:2},
+{e:"⚡",t:"Fast Math",q:"What is 100 ÷ 4?",o:["20","25","30","40"],a:1},
+{e:"🗺️",t:"Geography",q:"What is the largest ocean?",o:["Atlantic","Indian","Pacific","Arctic"],a:2}
+];
+
+let streak=0;
+const feed=document.getElementById("feed"), streakEl=document.getElementById("streak");
+
+function makeCard(d){
+ const card=document.createElement("section"); card.className="card";
+ const inner=document.createElement("div"); inner.className="inner";
+ inner.innerHTML=`<div class="emoji">${d.e}</div><div class="type">${d.t}</div><div class="title">${d.q}</div><div class="hint">Pick an answer.</div><div class="options"></div><div class="result"></div>`;
+ const opts=inner.querySelector(".options"), result=inner.querySelector(".result");
+ d.o.forEach((x,i)=>{
+  const b=document.createElement("button"); b.className="option"; b.textContent=x;
+  b.onclick=()=>{
+   [...opts.children].forEach(v=>v.classList.remove("selected")); b.classList.add("selected");
+   if(d.a===null){result.textContent="Nice choice 😎"; streak++; streakEl.textContent="🔥 "+streak; return;}
+   if(i===d.a){result.textContent="✅ Correct!"; streak++; streakEl.textContent="🔥 "+streak;}
+   else result.textContent="❌ Not quite — try the next one!";
+  };
+  opts.appendChild(b);
+ });
+ card.appendChild(inner); feed.appendChild(card);
+}
+
+for(let i=0;i<12;i++) makeCard(data[Math.floor(Math.random()*data.length)]);
+feed.addEventListener("scroll",()=>{
+ if(feed.scrollTop+feed.clientHeight>=feed.scrollHeight-700)
+   for(let i=0;i<8;i++) makeCard(data[Math.floor(Math.random()*data.length)]);
+});
+</script>
+</body>
+</html>
