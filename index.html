@@ -103,7 +103,7 @@ function makeCard(id){
 }
 function addBatch(){for(let i=0;i<6 && nextId<TOTAL;i++){makeCard(nextId++);}countEl.textContent=`Challenge ${Math.max(1,nextId-5).toLocaleString()}–${nextId.toLocaleString()} / ${TOTAL.toLocaleString()}`}
 addBatch();
-feed.addEventListener("scroll",()=>{if(feed.scrollTop+feed.clientHeight>=feed.scrollHeight-900 && nextId<TOTAL)addBatch()},{passive:true});
+feed.addEventListener("scroll",()=>{if(feed.scrollTop+feed.clientHeight>=feed.scrollHeight-300 && nextId<TOTAL)addBatch()},{passive:true});
 </script>
 </body>
 </html>
