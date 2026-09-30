@@ -27,8 +27,7 @@ header{height:58px;display:flex;align-items:center;justify-content:space-between
 // Swipe Break has 1,000,000 deterministic, non-repeating generated challenges.
 // They are generated as needed, so the app does NOT need to store a million questions.
 const TOTAL=1000000;
-let nextId=0, streak=0;
-const feed=document.getElementById("feed"), streakEl=document.getElementById("streak"), countEl=document.getElementById("count");
+let nextId=Math.floor(Math.random()*TOTAL), streak=0;const feed=document.getElementById("feed"), streakEl=document.getElementById("streak"), countEl=document.getElementById("count");
 
 const esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#39;"}[c]));
 const rng=(seed)=>{let x=(seed+0x6D2B79F5)>>>0; return()=>{x=Math.imul(x^x>>>15,1|x);x^=x+Math.imul(x^x>>>7,61|x);return((x^x>>>14)>>>0)/4294967296}};
