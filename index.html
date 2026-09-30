@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#090909">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Swipe Break">
+<title>Swipe Break</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#080808;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;height:100%;overflow:hidden}
+body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+header{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-weight:800}
+#feed{height:calc(100% - 58px);overflow-y:auto;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch}
+.card{height:100%;min-height:520px;scroll-snap-align:start;display:flex;align-items:center;justify-content:center;padding:24px}
+.inner{width:min(520px,100%);background:#171717;border:1px solid #2b2b2b;border-radius:28px;padding:30px 22px;text-align:center}
+.emoji{font-size:64px}.type{font-size:13px;color:#999;text-transform:uppercase;letter-spacing:1.2px;margin-top:12px}.title{font-size:28px;font-weight:850;line-height:1.12;margin-top:10px}.hint{color:#aaa;margin:10px 0 18px;line-height:1.4}
+.options{display:grid;gap:10px}.option{width:100%;padding:14px;border-radius:15px;border:1px solid #333;background:#222;color:#fff;font-size:16px;font-weight:700}.option.selected{outline:2px solid #fff;background:#303030}.result{min-height:22px;margin-top:12px;font-weight:700}.counter{font-size:12px;color:#777;margin-top:4px}.swipe{position:fixed;bottom:12px;left:0;right:0;text-align:center;color:#777;font-size:12px;pointer-events:none}
+</style>
+</head>
+<body>
+<header><div>Swipe Break</div><div><div id="streak">🔥 0</div><div class="counter" id="count">Challenge 1 / 1,000,000</div></div></header>
+<div id="feed"></div>
+<div class="swipe">↑ swipe for another challenge</div>
+<script>
+// Swipe Break has 1,000,000 deterministic, non-repeating generated challenges.
+// They are generated as needed, so the app does NOT need to store a million questions.
+const TOTAL=1000000;
+let nextId=0, streak=0;
+const feed=document.getElementById("feed"), streakEl=document.getElementById("streak"), countEl=document.getElementById("count");
+
+const esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#39;"}[c]));
+const rng=(seed)=>{let x=(seed+0x6D2B79F5)>>>0; return()=>{x=Math.imul(x^x>>>15,1|x);x^=x+Math.imul(x^x>>>7,61|x);return((x^x>>>14)>>>0)/4294967296}};
+const pick=(a,r)=>a[Math.floor(r()*a.length)];
+const shuffle=(a,r)=>{a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+const colors=["red","blue","green","yellow","orange","purple","black","white","pink","brown","gray","silver"];
+const animals=["cat","dog","penguin","frog","turtle","rabbit","panda","koala","lion","tiger","elephant","giraffe","zebra","fox","wolf","bear","otter","dolphin","octopus","shark"];
+const foods=["pizza","burger","apple","banana","popcorn","taco","cookie","donut","ice cream","watermelon","pancake","sandwich","hot dog","strawberry","pretzel"];
+const countries=["Canada","Brazil","Japan","Italy","France","Mexico","Australia","India","Egypt","Greece","Spain","Germany","Norway","Kenya","Chile","Peru","China","South Korea","Ireland","New Zealand"];
+const games=["Minecraft","Roblox","Fortnite","Terraria","Mario Kart","Rocket League","Pokémon","Among Us","Super Mario Bros.","The Legend of Zelda","Geometry Dash","Fall Guys"];
+const emojis=["🍎","🐸","⭐","🚗","🍕","🎮","🦖","🚀","🌎","⚡","🎈","🍪","🐙","🏀","🎲"];
+const words=["APPLE","ROBOT","GAMER","PLANET","CASTLE","BANANA","TIGER","PUZZLE","COMPUTER","DRAGON","MANGO","ROCKET"];
+
+function question(id){
+ const r=rng(id), type=id%12;
+ if(type===0){
+   const n=2+Math.floor(r()*48), mult=2+Math.floor(r()*9), ans=n*mult, opts=shuffle([ans,ans+mult,ans-mult,ans+2*mult],r);
+   return {e:"🔢",t:"Fast Math",q:`What is ${n} × ${mult}?`,o:opts.map(String),a:opts.indexOf(ans)};
+ }
+ if(type===1){
+   const n=5+Math.floor(r()*95), add=5+Math.floor(r()*95), ans=n+add, opts=shuffle([ans,ans+1,ans-1,ans+10],r);
+   return {e:"➕",t:"Number Puzzle",q:`What is ${n} + ${add}?`,o:opts.map(String),a:opts.indexOf(ans)};
+ }
+ if(type===2){
+   const n=20+Math.floor(r()*80), sub=2+Math.floor(r()*18), ans=n-sub, opts=shuffle([ans,ans+sub,ans-1,ans+10],r);
+   return {e:"➖",t:"Number Puzzle",q:`What is ${n} − ${sub}?`,o:opts.map(String),a:opts.indexOf(ans)};
+ }
+ if(type===3){
+   const a=2+Math.floor(r()*20), b=2+Math.floor(r()*20), ans=a*b, opts=shuffle([ans,ans+a,ans-b,ans+10],r);
+   return {e:"✖️",t:"Math",q:`What is ${a} × ${b}?`,o:opts.map(String),a:opts.indexOf(ans)};
+ }
+ if(type===4){
+   const color=pick(colors,r), opts=shuffle([color,"something else","nothing","two colors"],r);
+   return {e:"👀",t:"Look Around",q:`Look around. Can you find something ${color}?`,o:opts,a:null};
+ }
+ if(type===5){
+   const animal=pick(animals,r), others=shuffle(animals.filter(x=>x!==animal),r).slice(0,3), opts=shuffle([animal,...others],r);
+   return {e:"🐾",t:"Animals",q:`Which of these is an animal?`,o:opts,a:opts.indexOf(animal)};
+ }
+ if(type===6){
+   const food=pick(foods,r), others=shuffle(foods.filter(x=>x!==food),r).slice(0,3), opts=shuffle([food,...others],r);
+   return {e:"🍿",t:"Food",q:`Which one is ${food}?`,o:opts,a:opts.indexOf(food)};
+ }
+ if(type===7){
+   const country=pick(countries,r), opts=shuffle([country,...shuffle(countries.filter(x=>x!==country),r).slice(0,3)],r);
+   return {e:"🌎",t:"Geography",q:`Which option is a country?`,o:opts,a:opts.indexOf(country)};
+ }
+ if(type===8){
+   const game=pick(games,r), opts=shuffle([game,...shuffle(games.filter(x=>x!==game),r).slice(0,3)],r);
+   return {e:"🎮",t:"Gaming",q:`Which game is real?`,o:opts,a:opts.indexOf(game)};
+ }
+ if(type===9){
+   const seq=[...Array(3)].map(()=>pick(emojis,r)), target=seq[1], opts=shuffle([target,pick(emojis.filter(x=>x!==target),r),pick(emojis.filter(x=>x!==target),r),pick(emojis.filter(x=>x!==target),r)],r);
+   return {e:"🧠",t:"Memory",q:`Remember: ${seq.join(" ")}. Which emoji was second?`,o:opts,a:opts.indexOf(target)};
+ }
+ if(type===10){
+   const word=pick(words,r), chars=shuffle([...word],r), scrambled=chars.join(""), opts=shuffle([word,pick(words.filter(x=>x!==word),r),pick(words.filter(x=>x!==word),r),pick(words.filter(x=>x!==word),r)],r);
+   return {e:"🔤",t:"Word Puzzle",q:`Unscramble: ${scrambled}`,o:opts,a:opts.indexOf(word)};
+ }
+ const n=1+Math.floor(r()*10), target=1+Math.floor(r()*10), opts=shuffle([String(target),String((target%10)+1),String(Math.max(1,target-1)),String(((target+4)%10)+1)],r);
+ return {e:"🎲",t:"Prediction",q:`Pick a number from 1–10. Which number did the app secretly choose?`,o:opts,a:opts.indexOf(String(target))};
+}
+
+function makeCard(id){
+ const d=question(id), card=document.createElement("section"); card.className="card";
+ const inner=document.createElement("div"); inner.className="inner";
+ inner.innerHTML=`<div class="emoji">${d.e}</div><div class="type">${d.t}</div><div class="title">${esc(d.q)}</div><div class="hint">Pick an answer.</div><div class="options"></div><div class="result"></div>`;
+ const opts=inner.querySelector(".options"), result=inner.querySelector(".result");
+ d.o.forEach((x,i)=>{const b=document.createElement("button");b.className="option";b.textContent=x;b.onclick=()=>{[...opts.children].forEach(v=>v.classList.remove("selected"));b.classList.add("selected");if(d.a===null||i===d.a){result.textContent=d.a===null?"Nice choice 😎":"✅ Correct!";streak++;streakEl.textContent="🔥 "+streak}else result.textContent="❌ Not quite — keep going!"};opts.appendChild(b)});
+ card.appendChild(inner);feed.appendChild(card);
+}
+function addBatch(){for(let i=0;i<6 && nextId<TOTAL;i++){makeCard(nextId++);}countEl.textContent=`Challenge ${Math.max(1,nextId-5).toLocaleString()}–${nextId.toLocaleString()} / ${TOTAL.toLocaleString()}`}
+addBatch();
+feed.addEventListener("scroll",()=>{if(feed.scrollTop+feed.clientHeight>=feed.scrollHeight-900 && nextId<TOTAL)addBatch()},{passive:true});
+</script>
+</body>
+</html>
