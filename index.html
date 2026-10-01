@@ -454,6 +454,42 @@ function question(id){
 
     const color = pick(colors, r);
 
+    const objects = [
+      "object",
+      "thing",
+      "item",
+      "something",
+      "nearby object",
+      "piece of furniture",
+      "decoration",
+      "device",
+      "surface",
+      "part of the room"
+    ];
+
+    const actions = [
+      `Can you find something ${color}?`,
+      `Can you spot something ${color}?`,
+      `Do you see anything ${color}?`,
+      `Can you locate something ${color}?`,
+      `Find something ${color} around you.`,
+      `Look around for something ${color}.`,
+      `Try to spot a ${color} ${pick(objects,r)}.`,
+      `Look nearby. Can you find something ${color}?`,
+      `Scan the room for something ${color}.`,
+      `Take a look around. Is anything ${color}?`,
+      `Look around your surroundings for ${color}.`,
+      `Can you identify a ${color} object nearby?`,
+      `Find a ${color} thing without moving from where you are.`,
+      `Look around carefully. Can you see something ${color}?`,
+      `Spot a ${color} ${pick(objects,r)} near you.`,
+      `Find something that has the color ${color}.`,
+      `Look around you and point out something ${color}.`,
+      `Can you see a ${color} ${pick(objects,r)}?`,
+      `Search your surroundings for something ${color}.`,
+      `What ${color} object can you spot nearby?`
+    ];
+
     const opts = shuffle([
       color,
       "something else",
@@ -461,28 +497,10 @@ function question(id){
       "two colors"
     ], r);
 
-    const questions = [
-      `Look around you. Can you find something ${color}?`,
-      `Find something ${color} around you.`,
-      `Can you spot something ${color}?`,
-      `Look around. Is there anything ${color} nearby?`,
-      `Find a ${color} object around you.`,
-      `Take a look around. Can you see something ${color}?`,
-      `Spot something ${color} near you.`,
-      `Look around your surroundings. Can you find ${color}?`,
-      `Can you see anything ${color} right now?`,
-      `Find something that is ${color}.`,
-      `Look around you for something ${color}.`,
-      `Is there a ${color} object you can see?`,
-      `Scan the area around you. Can you spot ${color}?`,
-      `Look nearby. Can you find something ${color}?`,
-      `Find a ${color} thing in your surroundings.`
-    ];
-
     return {
       e:"👀",
       t:"Look Around",
-      q:pick(questions, r),
+      q:pick(actions, r),
       o:opts,
       a:null
     };
