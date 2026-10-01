@@ -893,20 +893,25 @@ function makeCard(id){
 function addBatch(){
 
   const BATCH_SIZE = 1000;
+  let added = 0;
 
-  for(
-    let i = 0;
-    i < BATCH_SIZE && generated < TOTAL;
-    i++
+  while(
+    added < BATCH_SIZE &&
+    generated < TOTAL
   ){
 
     // Wrap around so a random starting point
     // can still visit all 1,000,000 challenges.
     const id = (startId + generated) % TOTAL;
 
-    makeCard(id);
+    const wasAdded = makeCard(id);
 
     generated++;
+
+    // Only count the challenge if it wasn't a duplicate
+    if(wasAdded){
+      added++;
+    }
   }
 }
 
