@@ -1,9 +1,15 @@
 {
-  "name":"Swipe Break",
-  "short_name":"Swipe Break",
-  "start_url":"./index.html",
-  "display":"standalone",
-  "background_color":"#080808",
-  "theme_color":"#090909",
-  "icons":[]
+  "name": "Swipe Break",
+  "short_name": "Swipe Break",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#080808",
+  "theme_color": "#090909",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
