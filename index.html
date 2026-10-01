@@ -2,13 +2,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Swipe Break</title>
+
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" type="image/png" href="icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Swipe Break">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Swipe Break</title>
+<meta name="theme-color" content="#000000">
 
 <style>
 * {
@@ -22,8 +24,8 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  font-family: Arial, sans-serif;
   background: #000;
+  font-family: Arial, sans-serif;
 }
 
 #feed {
@@ -32,7 +34,7 @@ html, body {
   overflow-y: auto;
   scroll-snap-type: y mandatory;
   scrollbar-width: none;
-  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 #feed::-webkit-scrollbar {
@@ -41,43 +43,48 @@ html, body {
 
 .card {
   width: 100%;
+  min-height: 100vh;
   height: 100vh;
   scroll-snap-align: start;
   scroll-snap-stop: always;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  padding: 30px;
-  color: white;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+}
+
+.card-inner {
+  width: min(92%, 650px);
   text-align: center;
 }
 
 .question {
-  font-size: clamp(28px, 7vw, 48px);
-  font-weight: 800;
-  max-width: 850px;
-  margin-bottom: 35px;
-  line-height: 1.15;
+  color: white;
+  font-size: clamp(25px, 6vw, 42px);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 30px;
 }
 
 .answers {
-  width: min(90%, 600px);
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 12px;
+  width: 100%;
 }
 
 .answer {
+  width: 100%;
+  min-height: 58px;
   border: 0;
-  border-radius: 18px;
-  padding: 18px 20px;
-  font-size: 21px;
-  font-weight: 700;
-  background: rgba(255,255,255,.15);
+  border-radius: 16px;
+  background: #222;
   color: white;
+  font-size: clamp(18px, 4.5vw, 24px);
+  font-weight: 600;
+  padding: 14px 18px;
   cursor: pointer;
-  transition: transform .15s, background .15s;
+  transition: transform .12s, background .12s;
 }
 
 .answer:active {
@@ -85,11 +92,11 @@ html, body {
 }
 
 .answer.correct {
-  background: #24c76b;
+  background: #20a84b;
 }
 
 .answer.wrong {
-  background: #e94b4b;
+  background: #d93636;
 }
 
 .answer.disabled {
@@ -99,50 +106,24 @@ html, body {
 .result {
   min-height: 30px;
   margin-top: 18px;
+  color: white;
   font-size: 20px;
   font-weight: 700;
 }
 
-#progressRail {
-  position: fixed;
-  right: 8px;
-  top: 15%;
-  width: 4px;
-  height: 70%;
-  background: rgba(255,255,255,.15);
-  border-radius: 10px;
-  z-index: 1000;
-}
-
-#progressThumb {
-  width: 100%;
-  height: 35px;
-  background: rgba(255,255,255,.65);
-  border-radius: 10px;
+.streak {
   position: absolute;
-  top: 0;
+  top: 18px;
+  left: 18px;
+  color: white;
+  font-size: 15px;
+  opacity: .7;
 }
 
-#progressText {
-  position: fixed;
-  right: 18px;
-  top: calc(15% + 75%);
-  transform: translateY(-50%);
-  color: rgba(255,255,255,.55);
-  font-size: 11px;
-  z-index: 1000;
-}
-
-.memoryWord {
-  font-size: 42px;
-  font-weight: 900;
-  margin-bottom: 25px;
-}
-
-.lookText {
-  font-size: 19px;
-  opacity: .8;
-  margin-top: 12px;
+.look {
+  font-size: 18px;
+  opacity: .75;
+  margin-top: 10px;
 }
 </style>
 </head>
@@ -151,1836 +132,785 @@ html, body {
 
 <div id="feed"></div>
 
-<div id="progressRail">
-  <div id="progressThumb"></div>
-</div>
-
-<div id="progressText">0 / 1,000,000</div>
-
 <script>
-
-/* =========================================================
-   SETTINGS
-========================================================= */
-
 const TOTAL = 1000000;
 const BATCH_SIZE = 1000;
 const MAX_DOM_CARDS = 100;
 
-const feed = document.getElementById("feed");
-const progressThumb = document.getElementById("progressThumb");
-const progressText = document.getElementById("progressText");
-
-
-/* =========================================================
-   DATA
-========================================================= */
-
 const colors = [
-  "red",
-  "blue",
-  "green",
-  "yellow",
-  "orange",
-  "purple",
-  "pink",
-  "brown",
-  "black",
-  "white"
+  "Red", "Blue", "Green", "Yellow", "Orange",
+  "Purple", "Pink", "Brown", "Black", "White"
 ];
 
 const animals = [
-  "dog",
-  "cat",
-  "lion",
-  "tiger",
-  "elephant",
-  "giraffe",
-  "zebra",
-  "penguin",
-  "dolphin",
-  "shark",
-  "horse",
-  "rabbit",
-  "monkey",
-  "panda",
-  "bear",
-  "wolf",
-  "fox",
-  "frog",
-  "turtle",
-  "kangaroo"
+  "Dog", "Cat", "Elephant", "Lion", "Tiger",
+  "Bear", "Rabbit", "Horse", "Monkey", "Dolphin",
+  "Penguin", "Giraffe", "Zebra", "Frog", "Turtle"
 ];
 
 const foods = [
-  "pizza",
-  "apple",
-  "banana",
-  "hamburger",
-  "taco",
-  "sandwich",
-  "orange",
-  "strawberry",
-  "watermelon",
-  "carrot",
-  "broccoli",
-  "cookie",
-  "popcorn",
-  "cheese",
-  "pasta",
-  "rice",
-  "cake",
-  "ice cream",
-  "donut",
-  "pretzel"
+  "Pizza", "Apple", "Banana", "Hamburger", "Taco",
+  "Sandwich", "Cookie", "Donut", "Pasta", "Popcorn",
+  "Ice cream", "Carrot", "Strawberry", "Watermelon", "Cake"
 ];
 
 const countries = [
-  "United States",
-  "Canada",
-  "Mexico",
-  "Brazil",
-  "France",
-  "Germany",
-  "Italy",
-  "Spain",
-  "Japan",
-  "China",
-  "India",
-  "Australia",
-  "Egypt",
-  "Greece",
-  "United Kingdom",
-  "Argentina",
-  "Portugal",
-  "Norway",
-  "Sweden",
-  "South Korea"
+  "United States", "Canada", "Mexico", "Brazil", "France",
+  "Germany", "Italy", "Spain", "Japan", "China",
+  "India", "Australia", "Egypt", "Greece", "Norway"
 ];
 
-const capitals = {
-  "United States": "Washington, D.C.",
-  "Canada": "Ottawa",
-  "Mexico": "Mexico City",
-  "Brazil": "Brasília",
-  "France": "Paris",
-  "Germany": "Berlin",
-  "Italy": "Rome",
-  "Spain": "Madrid",
-  "Japan": "Tokyo",
-  "China": "Beijing",
-  "India": "New Delhi",
-  "Australia": "Canberra",
-  "Egypt": "Cairo",
-  "Greece": "Athens",
-  "United Kingdom": "London",
-  "Argentina": "Buenos Aires",
-  "Portugal": "Lisbon",
-  "Norway": "Oslo",
-  "Sweden": "Stockholm",
-  "South Korea": "Seoul"
-};
+const capitals = [
+  ["France", "Paris"],
+  ["Japan", "Tokyo"],
+  ["Italy", "Rome"],
+  ["Germany", "Berlin"],
+  ["Spain", "Madrid"],
+  ["Canada", "Ottawa"],
+  ["Australia", "Canberra"],
+  ["Greece", "Athens"],
+  ["Norway", "Oslo"],
+  ["India", "New Delhi"]
+];
 
 const shapes = [
-  "circle",
-  "square",
-  "triangle",
-  "rectangle",
-  "pentagon",
-  "hexagon",
-  "octagon",
-  "star"
+  "Circle", "Square", "Triangle", "Rectangle",
+  "Pentagon", "Hexagon", "Oval", "Star"
 ];
 
 const objects = [
-  "chair",
-  "table",
-  "lamp",
-  "phone",
-  "book",
-  "backpack",
-  "pencil",
-  "shoe",
-  "bottle",
-  "clock",
-  "computer",
-  "television",
-  "door",
-  "window",
-  "pillow",
-  "keyboard",
-  "mouse",
-  "desk",
-  "cup",
-  "glasses"
+  "Chair", "Table", "Book", "Pencil", "Bottle",
+  "Backpack", "Clock", "Lamp", "Phone", "Shoe",
+  "Keyboard", "Cup", "Door", "Window", "Ball"
 ];
 
 const seasons = [
-  "spring",
-  "summer",
-  "fall",
-  "winter"
+  "Spring", "Summer", "Fall", "Winter"
 ];
 
 const opposites = [
-  ["hot", "cold"],
-  ["big", "small"],
-  ["fast", "slow"],
-  ["light", "dark"],
-  ["old", "young"],
-  ["early", "late"],
-  ["high", "low"],
-  ["open", "closed"],
-  ["full", "empty"],
-  ["happy", "sad"],
-  ["hard", "soft"],
-  ["near", "far"],
-  ["inside", "outside"],
-  ["day", "night"],
-  ["before", "after"],
-  ["up", "down"],
-  ["left", "right"],
-  ["loud", "quiet"],
-  ["easy", "difficult"],
-  ["clean", "dirty"]
+  ["Hot", "Cold"],
+  ["Big", "Small"],
+  ["Fast", "Slow"],
+  ["Light", "Dark"],
+  ["Up", "Down"],
+  ["Open", "Closed"],
+  ["Happy", "Sad"],
+  ["Day", "Night"],
+  ["Old", "Young"],
+  ["Hard", "Soft"]
 ];
 
 const emojis = [
-  ["😀", "happy"],
-  ["😂", "laughing"],
-  ["😢", "sad"],
-  ["😡", "angry"],
-  ["😴", "sleepy"],
-  ["😮", "surprised"],
-  ["❤️", "love"],
-  ["👍", "thumbs up"],
-  ["🎉", "celebration"],
-  ["🔥", "fire"]
+  ["😀", "Happy"],
+  ["😂", "Laughing"],
+  ["😢", "Sad"],
+  ["😡", "Angry"],
+  ["😴", "Sleepy"],
+  ["😍", "Love"],
+  ["😮", "Surprised"],
+  ["👍", "Thumbs up"],
+  ["🎉", "Celebration"],
+  ["❤️", "Love"]
 ];
 
 const games = [
-  "Minecraft",
-  "Roblox",
-  "Fortnite",
-  "Mario Kart",
-  "Tetris",
-  "Pac-Man",
-  "Pokémon",
-  "The Legend of Zelda"
+  "Minecraft", "Roblox", "Fortnite", "Mario Kart",
+  "Super Mario Bros.", "Pokémon", "Tetris",
+  "Rocket League", "Among Us", "Terraria",
+  "Animal Crossing", "The Legend of Zelda"
 ];
 
+const months = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
 
-/* =========================================================
-   RANDOM NUMBER GENERATOR
-========================================================= */
+const basicKnowledge = [
+  {
+    q: "Which one can fly?",
+    options: ["Bird", "Chair", "Table", "Pencil"],
+    a: "Bird"
+  },
+  {
+    q: "Which one is used for writing?",
+    options: ["Pencil", "Banana", "Shoe", "Plate"],
+    a: "Pencil"
+  },
+  {
+    q: "Which one is a vehicle?",
+    options: ["Car", "Apple", "Chair", "Book"],
+    a: "Car"
+  },
+  {
+    q: "Which one is normally found in the sky?",
+    options: ["Cloud", "Chair", "Spoon", "Shoe"],
+    a: "Cloud"
+  },
+  {
+    q: "Which one is normally used to tell time?",
+    options: ["Clock", "Pizza", "Pencil", "Shoe"],
+    a: "Clock"
+  },
+  {
+    q: "Which one is a musical instrument?",
+    options: ["Guitar", "Table", "Apple", "Bottle"],
+    a: "Guitar"
+  }
+];
 
 function rng(seed) {
-
   let x = seed >>> 0;
 
   return function() {
-
     x += 0x6D2B79F5;
-
     let t = x;
-
-    t = Math.imul(
-      t ^ (t >>> 15),
-      t | 1
-    );
-
-    t ^= t +
-      Math.imul(
-        t ^ (t >>> 7),
-        t | 61
-      );
-
-    return (
-      (t ^ (t >>> 14)) >>> 0
-    ) / 4294967296;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
 
-
-function pick(array, random) {
-
-  return array[
-    Math.floor(random() * array.length)
-  ];
+function pick(arr, random) {
+  return arr[Math.floor(random() * arr.length)];
 }
 
+function shuffle(arr, random) {
+  const a = [...arr];
 
-function shuffle(array, random) {
-
-  const copy = [...array];
-
-  for (
-    let i = copy.length - 1;
-    i > 0;
-    i--
-  ) {
-
-    const j =
-      Math.floor(random() * (i + 1));
-
-    [copy[i], copy[j]] =
-      [copy[j], copy[i]];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
 
-  return copy;
+  return a;
 }
 
+function makeOptions(correct, wrongPool, random) {
+  const unique = [...new Set(
+    wrongPool.filter(x => x !== correct)
+  )];
 
-/* =========================================================
-   MULTIPLE CHOICE HELPER
-   GUARANTEES EXACTLY ONE CORRECT ANSWER
-========================================================= */
+  const wrong = shuffle(unique, random).slice(0, 3);
+  return shuffle([correct, ...wrong], random);
+}
 
-function makeOptions(
-  correct,
-  wrongAnswers,
-  random,
-  count = 4
-) {
-
-  /*
-     Remove anything that is identical to the correct answer.
-  */
-
-  const uniqueWrong = [
-    ...new Set(
-      wrongAnswers.filter(
-        answer => String(answer) !== String(correct)
-      )
-    )
-  ];
-
-  const selectedWrong =
-    shuffle(uniqueWrong, random)
-      .slice(0, count - 1);
-
-  const options = shuffle(
-    [
-      correct,
-      ...selectedWrong
-    ],
-    random
-  );
+function categoryQuestion(name, correctPool, wrongPool, random) {
+  const correct = pick(correctPool, random);
+  const options = makeOptions(correct, wrongPool, random);
 
   return {
+    q: `Which one is a ${name}?`,
     options,
-    answer: options.indexOf(correct)
+    a: correct
   };
 }
 
-
-/* =========================================================
-   CATEGORY QUESTION HELPER
-========================================================= */
-
-function categoryQuestion(
-  category,
-  correct,
-  wrongPool,
-  random
-) {
-
-  /*
-     CRITICAL:
-     wrongPool MUST contain things that are NOT
-     members of the category being asked about.
-  */
-
-  const wrongAnswers = shuffle(
-    wrongPool.filter(
-      item => item !== correct
-    ),
-    random
-  ).slice(0, 3);
-
-  const options = shuffle(
-    [
-      correct,
-      ...wrongAnswers
-    ],
-    random
-  );
-
-  return {
-    q: `Which one is a ${category}?`,
-    o: options,
-    a: options.indexOf(correct)
-  };
-}
-
-
-/* =========================================================
-   QUESTION GENERATOR
-========================================================= */
-
-function generateQuestion(id) {
-
-  const random = rng(
-    id * 7919 + 1234567
-  );
-
+function generateChallenge(id) {
+  const random = rng(id + 987654321);
   const type = id % 30;
 
-
-  /* =======================================================
-     0 — ADDITION
-  ======================================================= */
-
-  if (type === 0) {
-
-    const a =
-      1 + Math.floor(random() * 50);
-
-    const b =
-      1 + Math.floor(random() * 50);
-
-    const correct = a + b;
-
-    const result = makeOptions(
-      correct,
-      [
-        correct + 1,
-        correct - 1,
-        correct + 2,
-        correct - 2,
-        correct + 5,
-        correct - 5
-      ],
-      random
-    );
-
-    return {
-      q: `What is ${a} + ${b}?`,
-      o: result.options.map(String),
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     1 — SUBTRACTION
-  ======================================================= */
-
-  if (type === 1) {
-
-    const a =
-      20 + Math.floor(random() * 80);
-
-    const b =
-      1 + Math.floor(random() * a);
-
-    const correct = a - b;
-
-    const result = makeOptions(
-      correct,
-      [
-        correct + 1,
-        correct - 1,
-        correct + 2,
-        correct - 2,
-        correct + 5,
-        correct - 5
-      ],
-      random
-    );
-
-    return {
-      q: `What is ${a} − ${b}?`,
-      o: result.options.map(String),
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     2 — MULTIPLICATION
-  ======================================================= */
-
-  if (type === 2) {
-
-    const a =
-      2 + Math.floor(random() * 12);
-
-    const b =
-      2 + Math.floor(random() * 12);
-
-    const correct = a * b;
-
-    const result = makeOptions(
-      correct,
-      [
-        correct + a,
-        correct - a,
-        correct + b,
-        correct - b,
-        correct + 1,
-        correct - 1
-      ],
-      random
-    );
-
-    return {
-      q: `What is ${a} × ${b}?`,
-      o: result.options.map(String),
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     3 — DIVISION
-  ======================================================= */
-
-  if (type === 3) {
-
-    const b =
-      2 + Math.floor(random() * 10);
-
-    const correct =
-      2 + Math.floor(random() * 12);
-
-    const a = b * correct;
-
-    const result = makeOptions(
-      correct,
-      [
-        correct + 1,
-        correct - 1,
-        correct + 2,
-        correct - 2,
-        correct + 5
-      ],
-      random
-    );
-
-    return {
-      q: `What is ${a} ÷ ${b}?`,
-      o: result.options.map(String),
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     4 — DOUBLE
-  ======================================================= */
-
-  if (type === 4) {
-
-    const n =
-      2 + Math.floor(random() * 50);
-
-    const correct = n * 2;
-
-    const result = makeOptions(
-      correct,
-      [
-        n,
-        n * 3,
-        n + 2,
-        correct + 2,
-        correct - 2
-      ],
-      random
-    );
-
-    return {
-      q: `What is double ${n}?`,
-      o: result.options.map(String),
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     5 — HALF
-  ======================================================= */
-
-  if (type === 5) {
-
-    const correct =
-      2 + Math.floor(random() * 30);
-
-    const n = correct * 2;
-
-    const result = makeOptions(
-      correct,
-      [
-        correct + 1,
-        correct - 1,
-        correct + 2,
-        correct - 2,
-        n
-      ],
-      random
-    );
-
-    return {
-      q: `What is half of ${n}?`,
-      o: result.options.map(String),
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     6 — BIGGER NUMBER
-  ======================================================= */
-
-  if (type === 6) {
-
-    const a =
-      10 + Math.floor(random() * 90);
-
-    const b =
-      a + 1 + Math.floor(random() * 30);
-
-    return {
-      q: `Which number is bigger: ${a} or ${b}?`,
-      o: [String(a), String(b)],
-      a: 1
-    };
-  }
-
-
-  /* =======================================================
-     7 — SMALLER NUMBER
-  ======================================================= */
-
-  if (type === 7) {
-
-    const a =
-      10 + Math.floor(random() * 90);
-
-    const b =
-      a + 1 + Math.floor(random() * 30);
-
-    return {
-      q: `Which number is smaller: ${a} or ${b}?`,
-      o: [String(a), String(b)],
-      a: 0
-    };
-  }
-
-
-  /* =======================================================
-     8 — NUMBER PATTERN
-  ======================================================= */
-
-  if (type === 8) {
-
-    const start =
-      2 + Math.floor(random() * 20);
-
-    const step =
-      2 + Math.floor(random() * 9);
-
-    const numbers = [
-      start,
-      start + step,
-      start + step * 2,
-      start + step * 3
-    ];
-
-    const correct =
-      start + step * 4;
-
-    const result = makeOptions(
-      correct,
-      [
-        correct + step,
-        correct - step,
-        correct + 1,
-        correct - 1
-      ],
-      random
-    );
-
-    return {
-      q: `What comes next? ${numbers.join(", ")}, ?`,
-      o: result.options.map(String),
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     9 — ANIMAL
-  ======================================================= */
-
-  if (type === 9) {
-
-    const correct =
-      pick(animals, random);
-
-    /*
-       IMPORTANT:
-       Foods, objects and shapes are NOT animals.
-    */
-
-    const wrongPool = [
-      ...foods,
-      ...objects,
-      ...shapes
-    ];
-
-    return categoryQuestion(
-      "animal",
-      correct,
-      wrongPool,
-      random
-    );
-  }
-
-
-  /* =======================================================
-     10 — FOOD
-  ======================================================= */
-
-  if (type === 10) {
-
-    const correct =
-      pick(foods, random);
-
-    /*
-       IMPORTANT:
-       Animals, objects and shapes are NOT foods.
-       So this can NEVER become:
-
-       pizza
-       banana
-       orange
-       hamburger
-
-       when asking "Which one is a food?"
-    */
-
-    const wrongPool = [
-      ...animals,
-      ...objects,
-      ...shapes
-    ];
-
-    return categoryQuestion(
-      "food",
-      correct,
-      wrongPool,
-      random
-    );
-  }
-
-
-  /* =======================================================
-     11 — COUNTRY
-  ======================================================= */
-
-  if (type === 11) {
-
-    const correct =
-      pick(countries, random);
-
-    /*
-       Foods, animals and objects are not countries.
-    */
-
-    const wrongPool = [
-      ...foods,
-      ...animals,
-      ...objects
-    ];
-
-    return categoryQuestion(
-      "country",
-      correct,
-      wrongPool,
-      random
-    );
-  }
-
-
-  /* =======================================================
-     12 — CAPITAL CITY
-  ======================================================= */
-
-  if (type === 12) {
-
-    const country =
-      pick(countries, random);
-
-    const correct =
-      capitals[country];
-
-    const wrongPool =
-      Object.values(capitals)
-        .filter(
-          city => city !== correct
-        );
-
-    const result = makeOptions(
-      correct,
-      wrongPool,
-      random
-    );
-
-    return {
-      q: `What is the capital of ${country}?`,
-      o: result.options,
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     13 — VIDEO GAME
-  ======================================================= */
-
-  if (type === 13) {
-
-    const correct =
-      pick(games, random);
-
-    /*
-       Wrong answers are real non-game things.
-    */
-
-    const wrongPool = [
-      "banana",
-      "elephant",
-      "chair",
-      "blue",
-      "triangle",
-      "pencil",
-      "pizza",
-      "bottle",
-      "rabbit",
-      "table"
-    ];
-
-    return categoryQuestion(
-      "video game",
-      correct,
-      wrongPool,
-      random
-    );
-  }
-
-
-  /* =======================================================
-     14 — SHAPE
-  ======================================================= */
-
-  if (type === 14) {
-
-    const correct =
-      pick(shapes, random);
-
-    /*
-       Colors, foods and animals are not shapes.
-    */
-
-    const wrongPool = [
-      ...colors,
-      ...foods,
-      ...animals
-    ];
-
-    return categoryQuestion(
-      "shape",
-      correct,
-      wrongPool,
-      random
-    );
-  }
-
-
-  /* =======================================================
-     15 — COLOR
-  ======================================================= */
-
-  if (type === 15) {
-
-    const correct =
-      pick(colors, random);
-
-    /*
-       CRITICAL FIX:
-
-       The wrong answers are ONLY animals,
-       objects and shapes.
-
-       Therefore if the question is:
-
-       "Which one is a color?"
-
-       there will NEVER be:
-       orange
-       black
-       blue
-       red
-
-       all together.
-
-       There is exactly ONE color.
-    */
-
-    const wrongPool = [
-      ...animals,
-      ...objects,
-      ...shapes
-    ];
-
-    return categoryQuestion(
-      "color",
-      correct,
-      wrongPool,
-      random
-    );
-  }
-
-
-  /* =======================================================
-     16 — LETTER COUNT
-  ======================================================= */
-
-  if (type === 16) {
-
-    const words = [
-      "apple",
-      "banana",
-      "computer",
-      "Minecraft",
-      "elephant",
-      "pizza",
-      "backpack",
-      "triangle",
-      "keyboard",
-      "hamburger"
-    ];
-
-    const word =
-      pick(words, random);
-
-    const correct =
-      word.length;
-
-    const result = makeOptions(
-      correct,
-      [
-        correct + 1,
-        correct - 1,
-        correct + 2,
-        correct - 2,
-        correct + 3
-      ],
-      random
-    );
-
-    return {
-      q: `How many letters are in "${word}"?`,
-      o: result.options.map(String),
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     17 — FIRST LETTER
-  ======================================================= */
-
-  if (type === 17) {
-
-    const word =
-      pick(
-        [
-          "apple",
-          "banana",
-          "computer",
-          "elephant",
-          "pizza",
-          "triangle",
-          "robot",
-          "Minecraft"
-        ],
-        random
-      );
-
-    const correct =
-      word[0].toUpperCase();
-
-    const letters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        .split("")
-        .filter(
-          letter => letter !== correct
-        );
-
-    const result = makeOptions(
-      correct,
-      letters,
-      random
-    );
-
-    return {
-      q: `What is the first letter of "${word}"?`,
-      o: result.options,
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     18 — LAST LETTER
-  ======================================================= */
-
-  if (type === 18) {
-
-    const word =
-      pick(
-        [
-          "apple",
-          "banana",
-          "computer",
-          "elephant",
-          "pizza",
-          "triangle",
-          "robot",
-          "Minecraft"
-        ],
-        random
-      );
-
-    const correct =
-      word[word.length - 1]
-        .toUpperCase();
-
-    const letters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        .split("")
-        .filter(
-          letter => letter !== correct
-        );
-
-    const result = makeOptions(
-      correct,
-      letters,
-      random
-    );
-
-    return {
-      q: `What is the last letter of "${word}"?`,
-      o: result.options,
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     19 — MONTH NUMBER
-  ======================================================= */
-
-  if (type === 19) {
-
-    const monthData = [
-      ["January", 1],
-      ["February", 2],
-      ["March", 3],
-      ["April", 4],
-      ["May", 5],
-      ["June", 6],
-      ["July", 7],
-      ["August", 8],
-      ["September", 9],
-      ["October", 10],
-      ["November", 11],
-      ["December", 12]
-    ];
-
-    const item =
-      pick(monthData, random);
-
-    const result = makeOptions(
-      item[1],
-      [
-        1, 2, 3, 4, 5, 6,
-        7, 8, 9, 10, 11, 12
-      ],
-      random
-    );
-
-    return {
-      q: `What number month is ${item[0]}?`,
-      o: result.options.map(String),
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     20 — DAYS IN MONTH
-  ======================================================= */
-
-  if (type === 20) {
-
-    const monthData = [
-      ["January", 31],
-      ["March", 31],
-      ["April", 30],
-      ["May", 31],
-      ["June", 30],
-      ["July", 31],
-      ["August", 31],
-      ["September", 30],
-      ["October", 31],
-      ["November", 30],
-      ["December", 31]
-    ];
-
-    const item =
-      pick(monthData, random);
-
-    const result = makeOptions(
-      item[1],
-      [28, 29, 30, 31],
-      random
-    );
-
-    return {
-      q: `How many days are in ${item[0]}?`,
-      o: result.options.map(String),
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     21 — SEASON
-  ======================================================= */
-
-  if (type === 21) {
-
-    const monthData = [
-      ["December", "winter"],
-      ["January", "winter"],
-      ["February", "winter"],
-      ["March", "spring"],
-      ["April", "spring"],
-      ["May", "spring"],
-      ["June", "summer"],
-      ["July", "summer"],
-      ["August", "summer"],
-      ["September", "fall"],
-      ["October", "fall"],
-      ["November", "fall"]
-    ];
-
-    const item =
-      pick(monthData, random);
-
-    const options =
-      shuffle(seasons, random);
-
-    return {
-      q: `Which season is ${item[0]} usually in?`,
-      o: options,
-      a: options.indexOf(item[1])
-    };
-  }
-
-
-  /* =======================================================
-     22 — OPPOSITE
-  ======================================================= */
-
-  if (type === 22) {
-
-    const pair =
-      pick(opposites, random);
-
-    const correct =
-      pair[1];
-
-    const wrongPool =
-      opposites
-        .flat()
-        .filter(
-          word =>
-            word !== pair[0] &&
-            word !== correct
-        );
-
-    const result = makeOptions(
-      correct,
-      wrongPool,
-      random
-    );
-
-    return {
-      q: `What is the opposite of "${pair[0]}"?`,
-      o: result.options,
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     23 — EMOJI MEANING
-  ======================================================= */
-
-  if (type === 23) {
-
-    const item =
-      pick(emojis, random);
-
-    const correct =
-      item[1];
-
-    const wrongPool =
-      emojis
-        .map(x => x[1])
-        .filter(
-          meaning => meaning !== correct
-        );
-
-    const result = makeOptions(
-      correct,
-      wrongPool,
-      random
-    );
-
-    return {
-      q: `What does ${item[0]} usually mean?`,
-      o: result.options,
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     24 — MEMORY
-  ======================================================= */
-
-  if (type === 24) {
-
-    const memoryWords = [
-      "APPLE",
-      "ROBOT",
-      "MOON",
-      "TIGER",
-      "PIZZA",
-      "CLOUD",
-      "STAR",
-      "BANANA",
-      "MINECRAFT",
-      "RAINBOW"
-    ];
-
-    const word =
-      pick(memoryWords, random);
-
-    return {
-      q: `Remember this word:`,
-      o: ["I remember it", "Next"],
-      a: 0,
-      memory: word
-    };
-  }
-
-
-  /* =======================================================
-     25 — LOOK AROUND: COLOR
-  ======================================================= */
-
-  if (type === 25) {
-
-    const color =
-      pick(colors, random);
-
-    return {
-      q: `Look around you. Find something ${color}.`,
-      o: [
-        "I found it",
-        "I don't see one"
-      ],
-      a: 0,
-      look: true
-    };
-  }
-
-
-  /* =======================================================
-     26 — LOOK AROUND: OBJECT
-  ======================================================= */
-
-  if (type === 26) {
-
-    const object =
-      pick(objects, random);
-
-    return {
-      q: `Look around you. Can you find a ${object}?`,
-      o: [
-        "Yes",
-        "Not right now"
-      ],
-      a: 0,
-      look: true
-    };
-  }
-
-
-  /* =======================================================
-     27 — ROUNDING
-  ======================================================= */
-
-  if (type === 27) {
-
-    const n =
-      10 + Math.floor(random() * 90);
-
-    const correct =
-      Math.round(n / 10) * 10;
-
-    const result = makeOptions(
-      correct,
-      [
-        correct - 10,
-        correct + 10,
-        correct - 20,
-        correct + 20
-      ],
-      random
-    );
-
-    return {
-      q: `What is ${n} rounded to the nearest 10?`,
-      o: result.options.map(String),
-      a: result.answer
-    };
-  }
-
-
-  /* =======================================================
-     28 — EVEN OR ODD
-  ======================================================= */
-
-  if (type === 28) {
-
-    const n =
-      1 + Math.floor(random() * 100);
-
-    const correct =
-      n % 2 === 0
-        ? "Even"
-        : "Odd";
-
-    return {
-      q: `Is ${n} even or odd?`,
-      o: ["Even", "Odd"],
-      a: correct === "Even" ? 0 : 1
-    };
-  }
-
-
-  /* =======================================================
-     29 — BASIC KNOWLEDGE
-  ======================================================= */
-
-  const facts = [
-
-    {
-      q: "How many sides does a triangle have?",
-      correct: "3",
-      wrong: ["4", "5", "6"]
-    },
-
-    {
-      q: "How many sides does a square have?",
-      correct: "4",
-      wrong: ["3", "5", "6"]
-    },
-
-    {
-      q: "Which planet do we live on?",
-      correct: "Earth",
-      wrong: ["Mars", "Venus", "Jupiter"]
-    },
-
-    {
-      q: "How many legs does a dog usually have?",
-      correct: "4",
-      wrong: ["2", "6", "8"]
-    },
-
-    {
-      q: "What is 10 × 10?",
-      correct: "100",
-      wrong: ["10", "20", "1,000"]
-    },
-
-    {
-      q: "How many days are in a week?",
-      correct: "7",
-      wrong: ["5", "6", "8"]
-    },
-
-    {
-      q: "How many hours are in a day?",
-      correct: "24",
-      wrong: ["12", "18", "48"]
-    },
-
-    {
-      q: "Which animal is known for having a long trunk?",
-      correct: "Elephant",
-      wrong: ["Tiger", "Penguin", "Rabbit"]
-    },
-
-    {
-      q: "Which one is a fruit?",
-      correct: "Apple",
-      wrong: ["Chair", "Pencil", "Shoe"]
-    },
-
-    {
-      q: "Which one is used for writing?",
-      correct: "Pencil",
-      wrong: ["Banana", "Pillow", "Spoon"]
-    },
-
-    {
-      q: "Which one is normally used to tell time?",
-      correct: "Clock",
-      wrong: ["Chair", "Banana", "Pencil"]
-    },
-
-    {
-      q: "Which one is normally used to sit on?",
-      correct: "Chair",
-      wrong: ["Apple", "Shark", "Triangle"]
-    },
-
-    {
-      q: "Which one can fly?",
-      correct: "Bird",
-      wrong: ["Chair", "Table", "Pencil"]
-    },
-
-    {
-      q: "Which one is normally found in the sky?",
-      correct: "Cloud",
-      wrong: ["Chair", "Spoon", "Shoe"]
-    },
-
-    {
-      q: "Which one is a shape?",
-      correct: "Triangle",
-      wrong: ["Banana", "Dog", "Pencil"]
+  switch(type) {
+
+    case 0: {
+      const a = Math.floor(random() * 50) + 1;
+      const b = Math.floor(random() * 50) + 1;
+      const answer = a + b;
+
+      return {
+        q: `What is ${a} + ${b}?`,
+        options: makeOptions(
+          answer,
+          [answer + 1, answer - 1, answer + 2, answer - 2, answer + 10],
+          random
+        ),
+        a: answer
+      };
     }
 
-  ];
+    case 1: {
+      const a = Math.floor(random() * 50) + 20;
+      const b = Math.floor(random() * 20) + 1;
+      const answer = a - b;
 
-  const fact =
-    pick(facts, random);
+      return {
+        q: `What is ${a} − ${b}?`,
+        options: makeOptions(
+          answer,
+          [answer + 1, answer - 1, answer + 2, answer - 2, answer + 5],
+          random
+        ),
+        a: answer
+      };
+    }
 
-  const options =
-    shuffle(
-      [
-        fact.correct,
-        ...fact.wrong
-      ],
-      random
-    );
+    case 2: {
+      const a = Math.floor(random() * 12) + 1;
+      const b = Math.floor(random() * 12) + 1;
+      const answer = a * b;
 
-  return {
-    q: fact.q,
-    o: options,
-    a: options.indexOf(fact.correct)
-  };
+      return {
+        q: `What is ${a} × ${b}?`,
+        options: makeOptions(
+          answer,
+          [answer + 1, answer - 1, answer + 2, answer - 2, answer + 5],
+          random
+        ),
+        a: answer
+      };
+    }
+
+    case 3: {
+      const b = Math.floor(random() * 10) + 1;
+      const answer = Math.floor(random() * 12) + 1;
+      const a = b * answer;
+
+      return {
+        q: `What is ${a} ÷ ${b}?`,
+        options: makeOptions(
+          answer,
+          [answer + 1, answer - 1, answer + 2, answer - 2, answer + 5],
+          random
+        ),
+        a: answer
+      };
+    }
+
+    case 4: {
+      const n = Math.floor(random() * 50) + 1;
+      const answer = n * 2;
+
+      return {
+        q: `What is double ${n}?`,
+        options: makeOptions(
+          answer,
+          [n, answer + 1, answer - 1, answer + 2],
+          random
+        ),
+        a: answer
+      };
+    }
+
+    case 5: {
+      const answer = Math.floor(random() * 25) + 1;
+      const n = answer * 2;
+
+      return {
+        q: `What is half of ${n}?`,
+        options: makeOptions(
+          answer,
+          [answer + 1, answer - 1, answer + 2, answer - 2],
+          random
+        ),
+        a: answer
+      };
+    }
+
+    case 6: {
+      let a = Math.floor(random() * 100) + 1;
+      let b = Math.floor(random() * 100) + 1;
+
+      if (a === b) b++;
+
+      const answer = Math.max(a, b);
+
+      return {
+        q: `Which number is bigger: ${a} or ${b}?`,
+        options: [a, b],
+        a: answer
+      };
+    }
+
+    case 7: {
+      let a = Math.floor(random() * 100) + 1;
+      let b = Math.floor(random() * 100) + 1;
+
+      if (a === b) b++;
+
+      const answer = Math.min(a, b);
+
+      return {
+        q: `Which number is smaller: ${a} or ${b}?`,
+        options: [a, b],
+        a: answer
+      };
+    }
+
+    case 8: {
+      const start = Math.floor(random() * 20) + 1;
+      const step = Math.floor(random() * 10) + 1;
+      const answer = start + step * 3;
+
+      return {
+        q: `${start}, ${start + step}, ${start + step * 2}, ?`,
+        options: makeOptions(
+          answer,
+          [answer + step, answer - step, answer + 1, answer - 1],
+          random
+        ),
+        a: answer
+      };
+    }
+
+    case 9:
+      return categoryQuestion(
+        "animal",
+        animals,
+        [...foods, ...objects, ...shapes],
+        random
+      );
+
+    case 10:
+      return categoryQuestion(
+        "food",
+        foods,
+        [...animals, ...objects, ...shapes],
+        random
+      );
+
+    case 11:
+      return categoryQuestion(
+        "country",
+        countries,
+        [...foods, ...animals, ...objects],
+        random
+      );
+
+    case 12: {
+      const item = pick(capitals, random);
+
+      const wrong = shuffle(
+        capitals
+          .map(x => x[1])
+          .filter(x => x !== item[1]),
+        random
+      ).slice(0, 3);
+
+      const options = shuffle(
+        [item[1], ...wrong],
+        random
+      );
+
+      return {
+        q: `What is the capital of ${item[0]}?`,
+        options,
+        a: item[1]
+      };
+    }
+
+    case 13:
+      return categoryQuestion(
+        "video game",
+        games,
+        [
+          "Banana", "Elephant", "Chair", "Blue",
+          "Triangle", "Pencil", "Pizza", "Bottle",
+          "Rabbit", "Table"
+        ],
+        random
+      );
+
+    case 14:
+      return categoryQuestion(
+        "shape",
+        shapes,
+        [...colors, ...foods, ...animals],
+        random
+      );
+
+    case 15:
+      return categoryQuestion(
+        "color",
+        colors,
+        [...animals, ...objects, ...shapes],
+        random
+      );
+
+    case 16: {
+      const word = pick(
+        [...animals, ...foods, ...objects],
+        random
+      );
+
+      const answer = word.replace(/[^a-zA-Z]/g, "").length;
+
+      return {
+        q: `How many letters are in "${word}"?`,
+        options: makeOptions(
+          answer,
+          [answer + 1, answer - 1, answer + 2, answer + 3],
+          random
+        ),
+        a: answer
+      };
+    }
+
+    case 17: {
+      const word = pick(
+        [...animals, ...foods, ...objects],
+        random
+      );
+
+      const answer = word[0].toUpperCase();
+
+      return {
+        q: `What is the first letter of "${word}"?`,
+        options: makeOptions(
+          answer,
+          ["A", "B", "C", "D", "M", "P", "S"],
+          random
+        ),
+        a: answer
+      };
+    }
+
+    case 18: {
+      const word = pick(
+        [...animals, ...foods, ...objects],
+        random
+      );
+
+      const letters = word.replace(/[^a-zA-Z]/g, "");
+      const answer = letters[letters.length - 1].toUpperCase();
+
+      return {
+        q: `What is the last letter of "${word}"?`,
+        options: makeOptions(
+          answer,
+          ["A", "B", "C", "D", "E", "M", "N"],
+          random
+        ),
+        a: answer
+      };
+    }
+
+    case 19: {
+      const index = Math.floor(random() * 12);
+      const answer = index + 1;
+
+      return {
+        q: `What number month is ${months[index]}?`,
+        options: makeOptions(
+          answer,
+          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+          random
+        ),
+        a: answer
+      };
+    }
+
+    case 20: {
+      const monthDays = {
+        January: 31,
+        February: 28,
+        March: 31,
+        April: 30,
+        May: 31,
+        June: 30,
+        July: 31,
+        August: 31,
+        September: 30,
+        October: 31,
+        November: 30,
+        December: 31
+      };
+
+      const month = pick(Object.keys(monthDays), random);
+      const answer = monthDays[month];
+
+      return {
+        q: `How many days does ${month} usually have?`,
+        options: makeOptions(
+          answer,
+          [28, 29, 30, 31],
+          random
+        ),
+        a: answer
+      };
+    }
+
+    case 21: {
+      const item = pick([
+        ["March", "Spring"],
+        ["April", "Spring"],
+        ["May", "Spring"],
+        ["June", "Summer"],
+        ["July", "Summer"],
+        ["August", "Summer"],
+        ["September", "Fall"],
+        ["October", "Fall"],
+        ["November", "Fall"],
+        ["December", "Winter"],
+        ["January", "Winter"],
+        ["February", "Winter"]
+      ], random);
+
+      return {
+        q: `In the Northern Hemisphere, which season is ${item[0]} usually in?`,
+        options: seasons,
+        a: item[1]
+      };
+    }
+
+    case 22: {
+      const pair = pick(opposites, random);
+
+      const wrong = shuffle(
+        opposites
+          .flat()
+          .filter(x => x !== pair[0] && x !== pair[1]),
+        random
+      ).slice(0, 3);
+
+      const options = shuffle(
+        [pair[1], ...wrong],
+        random
+      );
+
+      return {
+        q: `What is the opposite of "${pair[0]}"?`,
+        options,
+        a: pair[1]
+      };
+    }
+
+    case 23: {
+      const item = pick(emojis, random);
+
+      const wrong = shuffle(
+        emojis
+          .map(x => x[1])
+          .filter(x => x !== item[1]),
+        random
+      ).slice(0, 3);
+
+      return {
+        q: `What does ${item[0]} usually mean?`,
+        options: shuffle(
+          [item[1], ...wrong],
+          random
+        ),
+        a: item[1]
+      };
+    }
+
+    case 24: {
+      const words = [
+        "APPLE", "ROCKET", "OCEAN", "TIGER",
+        "CASTLE", "MUSIC", "PLANET", "PIZZA"
+      ];
+
+      const word = pick(words, random);
+
+      return {
+        q: `Remember this word: ${word}`,
+        options: ["I remember it", "Next"],
+        a: "I remember it"
+      };
+    }
+
+    case 25: {
+      const color = pick(colors, random);
+
+      return {
+        q: `Look around you for something ${color.toLowerCase()}.`,
+        options: ["I found one", "I don't see one"],
+        a: "I found one"
+      };
+    }
+
+    case 26: {
+      const object = pick(objects, random);
+
+      return {
+        q: `Look around you for a ${object.toLowerCase()}.`,
+        options: ["I found one", "I don't see one"],
+        a: "I found one"
+      };
+    }
+
+    case 27: {
+      const n = Math.floor(random() * 990) + 10;
+      const answer = Math.round(n / 10) * 10;
+
+      return {
+        q: `Round ${n} to the nearest 10.`,
+        options: makeOptions(
+          answer,
+          [answer - 10, answer + 10, answer - 20, answer + 20],
+          random
+        ),
+        a: answer
+      };
+    }
+
+    case 28: {
+      const n = Math.floor(random() * 100) + 1;
+      const answer = n % 2 === 0 ? "Even" : "Odd";
+
+      return {
+        q: `Is ${n} even or odd?`,
+        options: ["Even", "Odd"],
+        a: answer
+      };
+    }
+
+    case 29: {
+      const item = pick(basicKnowledge, random);
+
+      return {
+        q: item.q,
+        options: shuffle(item.options, random),
+        a: item.a
+      };
+    }
+  }
 }
 
+const feed = document.getElementById("feed");
 
-/* =========================================================
-   CREATE CARD
-========================================================= */
+let generated = 0;
+let streak = 0;
 
-function createCard(id) {
+const startId = Math.floor(Math.random() * TOTAL);
 
-  const data =
-    generateQuestion(id);
-
-  const card =
-    document.createElement("section");
-
+function createCard(challenge, id) {
+  const card = document.createElement("section");
   card.className = "card";
 
-  const random =
-    rng(id * 99991 + 42);
+  const inner = document.createElement("div");
+  inner.className = "card-inner";
 
-  const hue =
-    Math.floor(random() * 360);
+  const streakText = document.createElement("div");
+  streakText.className = "streak";
+  streakText.textContent = `Streak: ${streak}`;
 
-  card.style.background =
-    `linear-gradient(
-      145deg,
-      hsl(${hue}, 65%, 18%),
-      hsl(${(hue + 45) % 360}, 60%, 8%)
-    )`;
+  const question = document.createElement("div");
+  question.className = "question";
+  question.textContent = challenge.q;
 
+  const answers = document.createElement("div");
+  answers.className = "answers";
 
-  /* QUESTION */
+  const result = document.createElement("div");
+  result.className = "result";
 
-  const question =
-    document.createElement("div");
+  challenge.options.forEach(option => {
+    const button = document.createElement("button");
+    button.className = "answer";
+    button.textContent = option;
 
-  question.className =
-    "question";
+    button.addEventListener("click", () => {
+      if (answers.dataset.answered === "true") return;
 
-  question.textContent =
-    data.q;
+      answers.dataset.answered = "true";
 
-  card.appendChild(question);
+      const buttons = [...answers.children];
 
+      buttons.forEach(btn => {
+        btn.classList.add("disabled");
+      });
 
-  /* MEMORY WORD */
+      if (String(option) === String(challenge.a)) {
+        button.classList.add("correct");
+        streak++;
+        result.textContent = `✓ Correct! Streak: ${streak}`;
+      } else {
+        button.classList.add("wrong");
+        streak = 0;
 
-  if (data.memory) {
-
-    const memory =
-      document.createElement("div");
-
-    memory.className =
-      "memoryWord";
-
-    memory.textContent =
-      data.memory;
-
-    card.appendChild(memory);
-
-    const note =
-      document.createElement("div");
-
-    note.className =
-      "lookText";
-
-    note.textContent =
-      "Try to remember it.";
-
-    card.appendChild(note);
-  }
-
-
-  /* ANSWERS */
-
-  const answers =
-    document.createElement("div");
-
-  answers.className =
-    "answers";
-
-
-  data.o.forEach(
-    (answer, index) => {
-
-      const button =
-        document.createElement("button");
-
-      button.className =
-        "answer";
-
-      button.textContent =
-        answer;
-
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          /*
-             Don't allow multiple answers.
-          */
-
-          if (
-            card.dataset.answered === "true"
-          ) {
-            return;
+        buttons.forEach(btn => {
+          if (String(btn.textContent) === String(challenge.a)) {
+            btn.classList.add("correct");
           }
+        });
 
-          card.dataset.answered =
-            "true";
+        result.textContent = `✗ Correct answer: ${challenge.a}`;
+      }
 
+      streakText.textContent = `Streak: ${streak}`;
+    });
 
-          const buttons =
-            [...answers.children];
+    answers.appendChild(button);
+  });
 
+  inner.appendChild(streakText);
+  inner.appendChild(question);
+  inner.appendChild(answers);
+  inner.appendChild(result);
 
-          buttons.forEach(
-            btn => {
-              btn.classList.add(
-                "disabled"
-              );
-            }
-          );
-
-
-          const result =
-            document.createElement("div");
-
-          result.className =
-            "result";
-
-
-          /* LOOK-AROUND QUESTIONS */
-
-          if (data.look) {
-
-            if (index === data.a) {
-
-              button.classList.add(
-                "correct"
-              );
-
-              result.textContent =
-                "Nice! 👍";
-
-              streak++;
-
-            }
-
-          }
-
-
-          /* NORMAL QUESTIONS */
-
-          else {
-
-            if (index === data.a) {
-
-              button.classList.add(
-                "correct"
-              );
-
-              result.textContent =
-                "Correct! ✓";
-
-              streak++;
-
-            }
-
-            else {
-
-              button.classList.add(
-                "wrong"
-              );
-
-              /*
-                 Because data.a is calculated AFTER
-                 shuffling the answers, this always
-                 highlights the actual correct answer.
-              */
-
-              if (buttons[data.a]) {
-
-                buttons[data.a]
-                  .classList.add(
-                    "correct"
-                  );
-              }
-
-              result.textContent =
-                "Not quite!";
-
-              streak = 0;
-            }
-          }
-
-
-          card.appendChild(result);
-        }
-      );
-
-
-      answers.appendChild(button);
-    }
-  );
-
-
-  card.appendChild(answers);
+  card.appendChild(inner);
 
   return card;
 }
 
-
-/* =========================================================
-   ENDLESS FEED
-========================================================= */
-
-let generated = 0;
-
-let startId =
-  Math.floor(
-    Math.random() * TOTAL
-  );
-
+function nextId(id) {
+  return (id + 1) % TOTAL;
+}
 
 function loadBatch() {
-
-  if (generated >= TOTAL) {
-    return;
-  }
-
-  const fragment =
-    document.createDocumentFragment();
-
+  const fragment = document.createDocumentFragment();
 
   for (
     let i = 0;
-    i < BATCH_SIZE &&
-    generated < TOTAL;
+    i < BATCH_SIZE && generated < TOTAL;
     i++
   ) {
-
-    const id =
-      (startId + generated) %
-      TOTAL;
+    const id = (startId + generated) % TOTAL;
+    const challenge = generateChallenge(id);
 
     fragment.appendChild(
-      createCard(id)
+      createCard(challenge, id)
     );
 
     generated++;
   }
 
-
   feed.appendChild(fragment);
-
-  cleanupCards();
-
-  updateProgress();
 }
-
-
-/* =========================================================
-   REMOVE OLD CARDS
-========================================================= */
 
 function cleanupCards() {
+  const cards = feed.children;
 
-  while (
-    feed.children.length >
-    MAX_DOM_CARDS
+  if (cards.length <= MAX_DOM_CARDS) return;
+
+  const removeCount = cards.length - MAX_DOM_CARDS;
+
+  let removedHeight = 0;
+
+  for (let i = 0; i < removeCount; i++) {
+    removedHeight += cards[0].offsetHeight;
+    cards[0].remove();
+  }
+
+  feed.scrollTop -= removedHeight;
+}
+
+function checkLoad() {
+  if (
+    feed.scrollTop + feed.clientHeight >=
+    feed.scrollHeight - feed.clientHeight * 3
   ) {
-
-    const first =
-      feed.firstElementChild;
-
-    const height =
-      first.offsetHeight;
-
-    first.remove();
-
-    /*
-       Keep the user's position from
-       jumping when old cards are removed.
-    */
-
-    feed.scrollTop -= height;
+    loadBatch();
+    cleanupCards();
   }
 }
 
+feed.addEventListener("scroll", checkLoad, {
+  passive: true
+});
 
-/* =========================================================
-   PROGRESS
-========================================================= */
+loadBatch();
 
-function updateProgress() {
-
-  progressText.textContent =
-    `${Math.min(
-      generated,
-      TOTAL
-    ).toLocaleString()} / ${TOTAL.toLocaleString()}`;
-
-
-  const percentage =
-    Math.min(
-      generated / TOTAL,
-      1
-    );
-
-
-  progressThumb.style.top =
-    `calc(${percentage * 100}% - 35px)`;
-}
-
-
-/* =========================================================
-   LOAD MORE WHEN NEAR BOTTOM
-========================================================= */
-
-feed.addEventListener(
-  "scroll",
-  () => {
-
-    const distanceFromBottom =
-      feed.scrollHeight -
-      feed.scrollTop -
-      feed.clientHeight;
-
-
-    if (
-      distanceFromBottom <
-      feed.clientHeight * 5
-    ) {
-
-      loadBatch();
-    }
-
-
-    updateProgress();
+setInterval(() => {
+  if (
+    feed.scrollHeight <
+    feed.scrollTop + feed.clientHeight * 4
+  ) {
+    loadBatch();
+    cleanupCards();
   }
-);
-
-
-/* =========================================================
-   SAFETY NET
-========================================================= */
-
-setInterval(
-  () => {
-
-    const distanceFromBottom =
-      feed.scrollHeight -
-      feed.scrollTop -
-      feed.clientHeight;
-
-
-    if (
-      distanceFromBottom <
-      feed.clientHeight * 5
-    ) {
-
-      loadBatch();
-    }
-
-  },
-  500
-);
-
-
-/* =========================================================
-   START GAME
-========================================================= */
-
-let streak = 0;
-
-loadBatch();
-loadBatch();
-
+}, 500);
 </script>
 
 </body>
