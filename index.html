@@ -521,27 +521,44 @@ if(type === 7){
 } 
 
   // Gaming
-  if(type === 8){
+if(type === 8){
 
-    const game = pick(games, r);
+  const game = pick(games, r);
 
-    const opts = shuffle([
-      game,
-      ...shuffle(
-        games.filter(x => x !== game),
-        r
-      ).slice(0,3)
-    ], r);
+  const opts = shuffle([
+    game,
+    ...shuffle(
+      games.filter(x => x !== game),
+      r
+    ).slice(0,3)
+  ], r);
 
-    return {
-      e:"🎮",
-      t:"Gaming",
-      q:"Which game is real?",
-      o:opts,
-      a:opts.indexOf(game)
-    };
-  }
+  const questions = [
+    "Which of these is a video game?",
+    "Pick the video game.",
+    "Which choice is a real game?",
+    "Find the game in this list.",
+    "Which one is a video game?",
+    "Choose the game.",
+    "Spot the video game.",
+    "Which of these games is real?",
+    "Can you identify the video game?",
+    "Which answer is a game?",
+    "Select the video game.",
+    "Which option is an actual game?",
+    "Find the game.",
+    "Which one belongs in the gaming category?",
+    "Which choice is something you can play?"
+  ];
 
+  return {
+    e:"🎮",
+    t:"Gaming",
+    q:pick(questions, r),
+    o:opts,
+    a:opts.indexOf(game)
+  };
+}
 
   // Memory
   if(type === 9){
