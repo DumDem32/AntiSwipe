@@ -170,6 +170,9 @@ const startId = Math.floor(Math.random() * TOTAL);
 let generated = 0;
 let streak = 0;
 
+// Keep track of challenges already shown this session
+const seenChallenges = new Set();
+
 const feed = document.getElementById("feed");
 const streakEl = document.getElementById("streak");
 const countEl = document.getElementById("count");
