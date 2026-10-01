@@ -1,49 +1,29 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
-
 <meta charset="utf-8">
 
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"
->
+<meta name="viewport"
+content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 
 <meta name="theme-color" content="#080808">
-
-<meta
-  name="apple-mobile-web-app-capable"
-  content="yes"
->
-
-<meta
-  name="apple-mobile-web-app-status-bar-style"
-  content="black-translucent"
->
-
-<meta
-  name="apple-mobile-web-app-title"
-  content="Swipe Break"
->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Swipe Break">
 
 <title>Swipe Break</title>
 
 <style>
-
 *{
   box-sizing:border-box;
 }
 
-html,
-body{
+html,body{
   margin:0;
   background:#080808;
   color:#fff;
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   height:100%;
   overflow:hidden;
 }
@@ -53,23 +33,15 @@ body{
   padding-bottom:env(safe-area-inset-bottom);
 }
 
-
-/* HEADER */
-
 header{
   height:58px;
-
   display:flex;
   align-items:center;
   justify-content:space-between;
-
   padding:0 18px;
-
   font-weight:800;
-
   position:relative;
   z-index:20;
-
   background:#080808;
 }
 
@@ -77,94 +49,63 @@ header{
   font-size:17px;
 }
 
-
-/* FEED */
-
 #feed{
   height:calc(100% - 58px);
-
   overflow-y:auto;
   overflow-x:hidden;
-
   scroll-snap-type:y mandatory;
-
   -webkit-overflow-scrolling:touch;
-
   scrollbar-width:none;
-  -ms-overflow-style:none;
 }
 
 #feed::-webkit-scrollbar{
   display:none;
 }
 
-
-/* CARD */
-
 .card{
   height:100%;
   min-height:520px;
-
   scroll-snap-align:start;
   scroll-snap-stop:always;
-
   display:flex;
-
   align-items:center;
   justify-content:center;
-
   padding:24px;
 }
 
 .inner{
   width:min(520px,100%);
-
   background:#171717;
-
   border:1px solid #2b2b2b;
-
   border-radius:28px;
-
   padding:30px 22px;
-
   text-align:center;
-
-  box-shadow:
-    0 12px 50px rgba(0,0,0,.25);
+  box-shadow:0 12px 50px rgba(0,0,0,.25);
 }
 
 .emoji{
-  font-size:64px;
+  font-size:60px;
   line-height:1.1;
 }
 
 .type{
   font-size:13px;
-
   color:#999;
-
   text-transform:uppercase;
-
   letter-spacing:1.2px;
-
   margin-top:12px;
 }
 
 .title{
-  font-size:28px;
-
+  font-size:27px;
   font-weight:850;
-
-  line-height:1.12;
-
+  line-height:1.15;
   margin-top:10px;
 }
 
 .hint{
   color:#aaa;
-
   margin:10px 0 18px;
-
   line-height:1.4;
 }
 
@@ -175,35 +116,18 @@ header{
 
 .option{
   width:100%;
-
   padding:14px;
-
   border-radius:15px;
-
   border:1px solid #333;
-
   background:#222;
-
   color:#fff;
-
   font-size:16px;
-
   font-weight:700;
-
   cursor:pointer;
-
-  transition:
-    transform .12s ease,
-    background .12s ease;
 }
 
 .option:active{
   transform:scale(.98);
-}
-
-.option.selected{
-  outline:2px solid #fff;
-  background:#303030;
 }
 
 .option.correct{
@@ -216,107 +140,72 @@ header{
   border-color:#d75a5a;
 }
 
+.option.selected{
+  outline:2px solid #fff;
+  background:#303030;
+}
+
+.option:disabled{
+  cursor:default;
+}
+
 .result{
   min-height:22px;
   margin-top:12px;
   font-weight:700;
 }
 
-
-/* SWIPE MESSAGE */
-
 .swipe{
   position:fixed;
-
   bottom:12px;
-
   left:0;
   right:0;
-
   text-align:center;
-
   color:#777;
-
   font-size:12px;
-
   pointer-events:none;
-
   z-index:30;
 }
 
-
-/* PROGRESS */
-
 #progressRail{
   position:fixed;
-
   right:5px;
-
   top:78px;
-
   bottom:25px;
-
   width:3px;
-
   background:#222;
-
   border-radius:99px;
-
   z-index:40;
-
   pointer-events:none;
 }
 
 #progressThumb{
   position:absolute;
-
   top:0;
-
   left:0;
-
   width:3px;
-
   height:8px;
-
-  min-height:8px;
-
   background:#777;
-
   border-radius:99px;
 }
 
 #progressText{
   position:fixed;
-
   right:12px;
-
   bottom:36px;
-
   color:#555;
-
   font-size:10px;
-
   z-index:40;
-
   pointer-events:none;
 }
-
 </style>
-
 </head>
 
 <body>
 
 <header>
-
-  <div class="logo">
-    Swipe Break
-  </div>
-
-  <div id="streak">
-    🔥 0
-  </div>
-
+  <div class="logo">Swipe Break</div>
+  <div id="streak">🔥 0</div>
 </header>
 
 <div id="feed"></div>
@@ -325,50 +214,32 @@ header{
   <div id="progressThumb"></div>
 </div>
 
-<div id="progressText">
-  0 / 1,000,000
-</div>
+<div id="progressText">0 / 1,000,000</div>
 
 <div class="swipe">
   ↑ swipe for another challenge
 </div>
 
-
 <script>
 
 /* =========================================================
-   SWIPE BREAK
-   =========================================================
-
-   1,000,000 UNIQUE CHALLENGE IDS
-
-   The challenge number is randomly selected when the
-   session starts.
-
-   Every ID produces its own deterministic challenge.
-
-   ========================================================= */
-
+   SETTINGS
+========================================================= */
 
 const TOTAL = 1000000;
-
 const BATCH_SIZE = 1000;
-
 const MAX_DOM_CARDS = 100;
 
 
-/* RANDOM START */
+/* =========================================================
+   SESSION
+========================================================= */
 
 const startId =
   Math.floor(Math.random() * TOTAL);
 
-
 let generated = 0;
-
 let streak = 0;
-
-
-/* Prevent exact duplicates during a session */
 
 const seenChallenges = new Set();
 
@@ -387,8 +258,8 @@ const progressText =
 
 
 /* =========================================================
-   RANDOM NUMBER GENERATOR
-   ========================================================= */
+   RANDOMIZER
+========================================================= */
 
 function rng(seed){
 
@@ -415,80 +286,28 @@ function rng(seed){
     ) / 4294967296;
 
   };
-
 }
 
 
-/* =========================================================
-   HELPERS
-   ========================================================= */
-
 function pick(arr,r){
-
-  return arr[
-    Math.floor(r() * arr.length)
-  ];
-
+  return arr[Math.floor(r()*arr.length)];
 }
 
 
 function shuffle(arr,r){
 
-  const a = [...arr];
+  const result = [...arr];
 
-  for(
-    let i=a.length-1;
-    i>0;
-    i--
-  ){
+  for(let i=result.length-1;i>0;i--){
 
     const j =
-      Math.floor(r() * (i+1));
+      Math.floor(r()*(i+1));
 
-    [
-      a[i],
-      a[j]
-    ] =
-    [
-      a[j],
-      a[i]
-    ];
-
+    [result[i],result[j]] =
+    [result[j],result[i]];
   }
 
-  return a;
-
-}
-
-
-function uniqueWrongNumbers(
-  answer,
-  count,
-  spread,
-  r
-){
-
-  const values = new Set();
-
-  while(values.size < count){
-
-    let n =
-      answer +
-      Math.floor(
-        (r() * 2 - 1) *
-        spread
-      );
-
-    n = Math.max(0,n);
-
-    if(n !== answer){
-      values.add(n);
-    }
-
-  }
-
-  return [...values];
-
+  return result;
 }
 
 
@@ -505,28 +324,49 @@ function esc(s){
       "'":"&#39;"
     }[c])
   );
+}
 
+
+function numberChoices(answer,r,spread=10){
+
+  const values = new Set();
+
+  values.add(answer);
+
+  while(values.size < 4){
+
+    let n =
+      answer +
+      Math.floor(
+        r()*(spread*2+1)
+      ) -
+      spread;
+
+    if(n !== answer && n >= 0){
+      values.add(n);
+    }
+  }
+
+  return shuffle([...values],r);
 }
 
 
 /* =========================================================
    DATA
-   ========================================================= */
+========================================================= */
 
 const colors = [
   "red","blue","green","yellow","orange","purple",
-  "black","white","pink","brown","gray","silver",
-  "gold","cyan","teal","navy","maroon","beige"
+  "pink","brown","black","white","gray"
 ];
 
 const animals = [
   "cat","dog","penguin","frog","turtle","rabbit",
   "panda","koala","lion","tiger","elephant","giraffe",
   "zebra","fox","wolf","bear","otter","dolphin",
-  "octopus","shark","horse","monkey","kangaroo","parrot",
-  "owl","eagle","snake","lizard","hamster","squirrel",
-  "deer","goat","cow","pig","chicken","seal","whale",
-  "camel","raccoon","hedgehog","bat","bee","butterfly"
+  "shark","horse","monkey","kangaroo","parrot","owl",
+  "eagle","snake","lizard","hamster","squirrel","deer",
+  "goat","cow","pig","chicken","whale","seal"
 ];
 
 const foods = [
@@ -536,8 +376,7 @@ const foods = [
   "orange","grape","muffin","waffle","cheese","carrot",
   "broccoli","chocolate","cereal","pasta","rice","toast",
   "cupcake","blueberry","pineapple","mango","pear",
-  "peach","cherry","salad","soup","fries","burrito",
-  "bagel","yogurt","melon","kiwi"
+  "peach","cherry","salad","soup","fries","burrito"
 ];
 
 const countries = [
@@ -547,9 +386,50 @@ const countries = [
   "Ireland","New Zealand","Argentina","Portugal","Sweden",
   "Finland","Iceland","Thailand","Vietnam","Turkey","Poland",
   "Denmark","Austria","Switzerland","Belgium","Colombia",
-  "Indonesia","Malaysia","Singapore","Nepal","Morocco",
-  "Croatia","Romania","Ukraine","Philippines"
+  "Indonesia","Malaysia","Singapore","Nepal","Morocco"
 ];
+
+const capitals = {
+  Canada:"Ottawa",
+  Brazil:"Brasília",
+  Japan:"Tokyo",
+  Italy:"Rome",
+  France:"Paris",
+  Mexico:"Mexico City",
+  Australia:"Canberra",
+  India:"New Delhi",
+  Egypt:"Cairo",
+  Greece:"Athens",
+  Spain:"Madrid",
+  Germany:"Berlin",
+  Norway:"Oslo",
+  Kenya:"Nairobi",
+  Chile:"Santiago",
+  Peru:"Lima",
+  China:"Beijing",
+  "South Korea":"Seoul",
+  Ireland:"Dublin",
+  "New Zealand":"Wellington",
+  Argentina:"Buenos Aires",
+  Portugal:"Lisbon",
+  Sweden:"Stockholm",
+  Finland:"Helsinki",
+  Iceland:"Reykjavík",
+  Thailand:"Bangkok",
+  Vietnam:"Hanoi",
+  Turkey:"Ankara",
+  Poland:"Warsaw",
+  Denmark:"Copenhagen",
+  Austria:"Vienna",
+  Switzerland:"Bern",
+  Belgium:"Brussels",
+  Colombia:"Bogotá",
+  Indonesia:"Jakarta",
+  Malaysia:"Kuala Lumpur",
+  Singapore:"Singapore",
+  Nepal:"Kathmandu",
+  Morocco:"Rabat"
+};
 
 const games = [
   "Minecraft","Roblox","Fortnite","Terraria","Mario Kart",
@@ -557,34 +437,13 @@ const games = [
   "The Legend of Zelda","Geometry Dash","Fall Guys",
   "Stardew Valley","Animal Crossing","Tetris","Portal",
   "Cuphead","Splatoon","Sonic the Hedgehog","Overcooked",
-  "Pikmin","Kirby","Celeste","Hollow Knight","Rayman",
-  "Pac-Man","Donkey Kong","Metroid","Luigi's Mansion",
-  "Mario Party","Street Fighter","Super Smash Bros.",
-  "Plants vs. Zombies","Clash Royale","Subnautica"
-];
-
-const emojis = [
-  "🍎","🐸","⭐","🚗","🍕","🎮","🦖","🚀",
-  "🌎","⚡","🎈","🍪","🐙","🏀","🎲","🌈",
-  "🔥","❄️","🐱","🐶","🍔","🌙","☀️","🎵",
-  "🎯","🧩","🚲","🏆","🎨","🛸","🌟","🍩",
-  "🦄","🐼","🍉","🚁","🎸","📚","💎","🌋"
-];
-
-const words = [
-  "APPLE","ROBOT","GAMER","PLANET","CASTLE","BANANA",
-  "TIGER","PUZZLE","COMPUTER","DRAGON","MANGO","ROCKET",
-  "PIXEL","MONKEY","ORANGE","BASKET","PENCIL","WINDOW",
-  "THUNDER","GALAXY","JUNGLE","MACHINE","RAINBOW","SPIDER",
-  "COOKIE","TURTLE","CAMERA","MYSTERY","GUITAR",
-  "CASTLE","OCEAN","FOREST","PLANET","ROBOT","LIGHT",
-  "BRIDGE","SCHOOL","MUSIC","SUMMER","WINTER","FLOWER"
+  "Pikmin","Kirby","Celeste","Hollow Knight","Pac-Man",
+  "Donkey Kong","Metroid","Mario Party","Super Smash Bros."
 ];
 
 const shapes = [
-  "circle","square","triangle","star","diamond",
-  "rectangle","oval","hexagon","heart","arrow",
-  "pentagon","octagon"
+  "circle","square","triangle","rectangle","hexagon",
+  "pentagon","octagon","oval","star","diamond"
 ];
 
 const directions = [
@@ -595,6 +454,16 @@ const seasons = [
   "spring","summer","autumn","winter"
 ];
 
+const months = [
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December"
+];
+
+const weekdays = [
+  "Monday","Tuesday","Wednesday","Thursday",
+  "Friday","Saturday","Sunday"
+];
+
 const objects = [
   "book","chair","table","phone","computer",
   "lamp","door","window","backpack","pencil",
@@ -603,234 +472,338 @@ const objects = [
   "box","picture","plant","blanket","pillow"
 ];
 
+const emojis = [
+  ["🐶","dog"],
+  ["🐱","cat"],
+  ["🍎","apple"],
+  ["🍕","pizza"],
+  ["🚗","car"],
+  ["🚀","rocket"],
+  ["⭐","star"],
+  ["🌈","rainbow"],
+  ["🔥","fire"],
+  ["❄️","snow"],
+  ["🏀","basketball"],
+  ["🎮","video game"],
+  ["🎸","guitar"],
+  ["🌎","Earth"],
+  ["🐼","panda"],
+  ["🦖","dinosaur"]
+];
+
 
 /* =========================================================
-   UNIQUE QUESTION GENERATOR
-   ========================================================= */
+   QUESTION TYPES
+
+   Every type below is designed to make logical sense.
+========================================================= */
 
 function question(id){
 
   const r = rng(id);
 
-  /*
-    Using id combinations here means there are far more
-    possible questions than the 1,000,000 IDs.
-  */
-
   const type =
-    id % 24;
+    id % 30;
 
 
-  /* =======================================================
-     MULTIPLICATION
-     ======================================================= */
+  /* -------------------------------------------------------
+     0. ADDITION
+  ------------------------------------------------------- */
 
   if(type === 0){
 
     const a =
-      2 + Math.floor(r()*98);
+      10 + Math.floor(r()*990);
 
     const b =
-      2 + Math.floor(r()*48);
+      10 + Math.floor(r()*990);
 
-    const answer =
-      a*b;
-
-    const wrong =
-      uniqueWrongNumbers(
-        answer,
-        3,
-        Math.max(10,Math.floor(answer*.15)),
-        r
-      );
+    const answer = a+b;
 
     const options =
-      shuffle(
-        [answer,...wrong],
-        r
+      numberChoices(
+        answer,
+        r,
+        25
       );
 
-    const templates = [
-      `What is ${a} × ${b}?`,
-      `Solve ${a} × ${b}.`,
-      `Calculate ${a} times ${b}.`,
-      `Quick math: ${a} × ${b} = ?`,
-      `What does ${a} multiplied by ${b} equal?`,
-      `Work out ${a} × ${b}.`,
-      `Find the product of ${a} and ${b}.`,
-      `Multiply ${a} by ${b}.`,
-      `Can you solve ${a} × ${b}?`,
-      `What is the product of ${a} and ${b}?`
-    ];
-
     return {
-      e:"🔢",
-      t:"Fast Math",
-      q:pick(templates,r),
+      e:"➕",
+      t:"Math",
+      q:`What is ${a} + ${b}?`,
       o:options.map(String),
       a:options.indexOf(answer)
     };
-
   }
 
 
-  /* =======================================================
-     ADDITION
-     ======================================================= */
+  /* -------------------------------------------------------
+     1. SUBTRACTION
+  ------------------------------------------------------- */
 
   if(type === 1){
 
     const a =
-      1 + Math.floor(r()*99999);
+      100 + Math.floor(r()*900);
 
     const b =
-      1 + Math.floor(r()*99999);
-
-    const answer =
-      a+b;
-
-    const wrong =
-      uniqueWrongNumbers(
-        answer,
-        3,
-        100,
-        r
-      );
-
-    const options =
-      shuffle(
-        [answer,...wrong],
-        r
-      );
-
-    const templates = [
-      `What is ${a} + ${b}?`,
-      `Solve: ${a} + ${b}`,
-      `Calculate ${a} plus ${b}.`,
-      `Add ${a} and ${b}.`,
-      `What is the total of ${a} and ${b}?`,
-      `Find the sum of ${a} and ${b}.`,
-      `Quick addition: ${a} + ${b} = ?`,
-      `Work out ${a} plus ${b}.`,
-      `What do you get when you add ${a} and ${b}?`
-    ];
-
-    return {
-      e:"➕",
-      t:"Addition",
-      q:pick(templates,r),
-      o:options.map(String),
-      a:options.indexOf(answer)
-    };
-
-  }
-
-
-  /* =======================================================
-     SUBTRACTION
-     ======================================================= */
-
-  if(type === 2){
-
-    const a =
-      100 +
-      Math.floor(r()*99900);
-
-    const b =
-      1 +
-      Math.floor(r()*(a-1));
+      1 + Math.floor(r()*a);
 
     const answer =
       a-b;
 
-    const wrong =
-      uniqueWrongNumbers(
-        answer,
-        3,
-        100,
-        r
-      );
-
     const options =
-      shuffle(
-        [answer,...wrong],
-        r
+      numberChoices(
+        answer,
+        r,
+        25
       );
-
-    const templates = [
-      `What is ${a} − ${b}?`,
-      `Solve: ${a} − ${b}`,
-      `Calculate ${a} minus ${b}.`,
-      `Subtract ${b} from ${a}.`,
-      `Find the difference between ${a} and ${b}.`,
-      `What remains after taking ${b} from ${a}?`,
-      `Quick subtraction: ${a} − ${b} = ?`,
-      `Work out ${a} minus ${b}.`
-    ];
 
     return {
       e:"➖",
-      t:"Subtraction",
-      q:pick(templates,r),
+      t:"Math",
+      q:`What is ${a} − ${b}?`,
       o:options.map(String),
       a:options.indexOf(answer)
     };
-
   }
 
 
-  /* =======================================================
-     LOOK AROUND
-     ======================================================= */
+  /* -------------------------------------------------------
+     2. MULTIPLICATION
+  ------------------------------------------------------- */
+
+  if(type === 2){
+
+    const a =
+      2 + Math.floor(r()*30);
+
+    const b =
+      2 + Math.floor(r()*30);
+
+    const answer =
+      a*b;
+
+    const options =
+      numberChoices(
+        answer,
+        r,
+        Math.max(5,Math.floor(answer*.12))
+      );
+
+    return {
+      e:"✖️",
+      t:"Math",
+      q:`What is ${a} × ${b}?`,
+      o:options.map(String),
+      a:options.indexOf(answer)
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     3. DIVISION
+  ------------------------------------------------------- */
 
   if(type === 3){
 
-    const color =
-      pick(colors,r);
+    const b =
+      2 + Math.floor(r()*20);
 
-    const object =
-      pick(objects,r);
+    const answer =
+      2 + Math.floor(r()*30);
 
-    const templates = [
-      `Can you find something ${color}?`,
-      `Can you spot something ${color}?`,
-      `Do you see anything ${color}?`,
-      `Look around for something ${color}.`,
-      `Find a ${color} object nearby.`,
-      `Try to spot a ${color} ${object}.`,
-      `Look carefully. Can you see something ${color}?`,
-      `Search your surroundings for something ${color}.`,
-      `Is there a ${color} ${object} nearby?`,
-      `What ${color} object can you spot?`,
-      `Take a look around and find something ${color}.`,
-      `Can you identify something ${color} in your view?`,
-      `Spot a ${color} ${object}.`,
-      `Look nearby and find a ${color} thing.`,
-      `Find something that has the color ${color}.`,
-      `Can you see a ${color} object without moving?`
-    ];
+    const a =
+      b*answer;
+
+    const options =
+      numberChoices(
+        answer,
+        r,
+        8
+      );
 
     return {
-      e:"👀",
-      t:"Look Around",
-      q:pick(templates,r),
-      o:shuffle([
-        "I found one",
-        "I don't see one",
-        "I see something similar",
-        "I'm not sure"
-      ],r),
-      a:null
+      e:"➗",
+      t:"Math",
+      q:`What is ${a} ÷ ${b}?`,
+      o:options.map(String),
+      a:options.indexOf(answer)
     };
-
   }
 
 
-  /* =======================================================
-     ANIMALS
-     ======================================================= */
+  /* -------------------------------------------------------
+     4. DOUBLE A NUMBER
+  ------------------------------------------------------- */
 
   if(type === 4){
+
+    const n =
+      2 + Math.floor(r()*500);
+
+    const answer =
+      n*2;
+
+    const options =
+      numberChoices(answer,r,20);
+
+    return {
+      e:"✌️",
+      t:"Quick Math",
+      q:`What is double ${n}?`,
+      o:options.map(String),
+      a:options.indexOf(answer)
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     5. HALF A NUMBER
+  ------------------------------------------------------- */
+
+  if(type === 5){
+
+    const answer =
+      2 + Math.floor(r()*400);
+
+    const n =
+      answer*2;
+
+    const options =
+      numberChoices(answer,r,15);
+
+    return {
+      e:"½️⃣",
+      t:"Quick Math",
+      q:`What is half of ${n}?`,
+      o:options.map(String),
+      a:options.indexOf(answer)
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     6. BIGGER NUMBER
+  ------------------------------------------------------- */
+
+  if(type === 6){
+
+    let a =
+      1 + Math.floor(r()*9999);
+
+    let b =
+      1 + Math.floor(r()*9999);
+
+    while(a === b){
+      b =
+        1 + Math.floor(r()*9999);
+    }
+
+    const answer =
+      Math.max(a,b);
+
+    const options =
+      shuffle([
+        String(a),
+        String(b),
+        String(answer+1),
+        String(Math.max(0,answer-1))
+      ],r);
+
+    return {
+      e:"📈",
+      t:"Compare",
+      q:`Which number is larger: ${a} or ${b}?`,
+      o:options,
+      a:options.indexOf(String(answer))
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     7. SMALLER NUMBER
+  ------------------------------------------------------- */
+
+  if(type === 7){
+
+    let a =
+      1 + Math.floor(r()*9999);
+
+    let b =
+      1 + Math.floor(r()*9999);
+
+    while(a === b){
+      b =
+        1 + Math.floor(r()*9999);
+    }
+
+    const answer =
+      Math.min(a,b);
+
+    const options =
+      shuffle([
+        String(a),
+        String(b),
+        String(Math.max(0,answer-1)),
+        String(Math.max(a,b)+1)
+      ],r);
+
+    return {
+      e:"📉",
+      t:"Compare",
+      q:`Which number is smaller: ${a} or ${b}?`,
+      o:options,
+      a:options.indexOf(String(answer))
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     8. NUMBER PATTERN
+  ------------------------------------------------------- */
+
+  if(type === 8){
+
+    const start =
+      2 + Math.floor(r()*50);
+
+    const step =
+      1 + Math.floor(r()*20);
+
+    const sequence = [
+      start,
+      start+step,
+      start+step*2,
+      start+step*3
+    ];
+
+    const answer =
+      start+step*4;
+
+    const options =
+      shuffle([
+        answer,
+        answer+step,
+        answer-step,
+        answer+step*2
+      ],r);
+
+    return {
+      e:"🔢",
+      t:"Pattern",
+      q:`${sequence.join(", ")}, ?`,
+      o:options.map(String),
+      a:options.indexOf(answer)
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     9. ANIMAL
+  ------------------------------------------------------- */
+
+  if(type === 9){
 
     const answer =
       pick(animals,r);
@@ -844,35 +817,21 @@ function question(id){
           .slice(0,3)
       ],r);
 
-    const templates = [
-      "Which one is an animal?",
-      "Which choice is a living creature?",
-      "Find the animal.",
-      "Can you identify the animal?",
-      "Which option belongs to the animal world?",
-      "Pick the real animal.",
-      "Which answer names an animal?",
-      "Spot the animal.",
-      "Which one is a creature?",
-      "Choose the animal from these choices."
-    ];
-
     return {
       e:"🐾",
       t:"Animals",
-      q:pick(templates,r),
+      q:"Which one is an animal?",
       o:options,
       a:options.indexOf(answer)
     };
-
   }
 
 
-  /* =======================================================
-     FOOD
-     ======================================================= */
+  /* -------------------------------------------------------
+     10. FOOD
+  ------------------------------------------------------- */
 
-  if(type === 5){
+  if(type === 10){
 
     const answer =
       pick(foods,r);
@@ -886,35 +845,21 @@ function question(id){
           .slice(0,3)
       ],r);
 
-    const templates = [
-      "Which one is food?",
-      "Which choice can you eat?",
-      "Find the edible item.",
-      "Which one belongs in the food category?",
-      "Can you identify the food?",
-      "Pick something you could eat.",
-      "Which option is something people eat?",
-      "Spot the food.",
-      "Which answer names a food?",
-      "Which choice could appear on a menu?"
-    ];
-
     return {
-      e:"🍿",
+      e:"🍕",
       t:"Food",
-      q:pick(templates,r),
+      q:"Which one is a food?",
       o:options,
       a:options.indexOf(answer)
     };
-
   }
 
 
-  /* =======================================================
-     GEOGRAPHY
-     ======================================================= */
+  /* -------------------------------------------------------
+     11. COUNTRY
+  ------------------------------------------------------- */
 
-  if(type === 6){
+  if(type === 11){
 
     const answer =
       pick(countries,r);
@@ -928,35 +873,52 @@ function question(id){
           .slice(0,3)
       ],r);
 
-    const templates = [
-      "Which of these is a country?",
-      "Which choice names a country?",
-      "Find the country.",
-      "Which place is a nation?",
-      "Can you identify the country?",
-      "Which option belongs on a world map as a country?",
-      "Pick the country from these choices.",
-      "Which answer represents a country?",
-      "Spot the country.",
-      "Which one is a nation?"
-    ];
-
     return {
       e:"🌎",
       t:"Geography",
-      q:pick(templates,r),
+      q:"Which one is a country?",
       o:options,
       a:options.indexOf(answer)
     };
-
   }
 
 
-  /* =======================================================
-     GAMING
-     ======================================================= */
+  /* -------------------------------------------------------
+     12. CAPITAL CITY
+  ------------------------------------------------------- */
 
-  if(type === 7){
+  if(type === 12){
+
+    const country =
+      pick(countries,r);
+
+    const answer =
+      capitals[country];
+
+    const options =
+      shuffle([
+        answer,
+        ...Object.values(capitals)
+          .filter(x=>x!==answer)
+          .sort(()=>r()-.5)
+          .slice(0,3)
+      ],r);
+
+    return {
+      e:"🏛️",
+      t:"Geography",
+      q:`What is the capital of ${country}?`,
+      o:options,
+      a:options.indexOf(answer)
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     13. VIDEO GAME
+  ------------------------------------------------------- */
+
+  if(type === 13){
 
     const answer =
       pick(games,r);
@@ -970,267 +932,21 @@ function question(id){
           .slice(0,3)
       ],r);
 
-    const templates = [
-      "Which of these is a video game?",
-      "Pick the video game.",
-      "Which choice is a real game?",
-      "Find the game.",
-      "Which one can you play?",
-      "Can you identify the game?",
-      "Which option belongs in gaming?",
-      "Spot the game title.",
-      "Which answer names a video game?",
-      "Choose the playable game."
-    ];
-
     return {
       e:"🎮",
       t:"Gaming",
-      q:pick(templates,r),
+      q:"Which one is a video game?",
       o:options,
       a:options.indexOf(answer)
     };
-
   }
 
 
-  /* =======================================================
-     MEMORY
-     ======================================================= */
+  /* -------------------------------------------------------
+     14. SHAPE
+  ------------------------------------------------------- */
 
-  if(type === 8){
-
-    const length =
-      4 + Math.floor(r()*5);
-
-    const sequence = [];
-
-    for(
-      let i=0;
-      i<length;
-      i++
-    ){
-
-      sequence.push(
-        pick(emojis,r)
-      );
-
-    }
-
-    const index =
-      Math.floor(r()*length);
-
-    const answer =
-      sequence[index];
-
-    const options =
-      shuffle([
-        answer,
-        ...emojis
-          .filter(x=>x!==answer)
-          .sort(()=>r()-.5)
-          .slice(0,3)
-      ],r);
-
-    return {
-      e:"🧠",
-      t:"Memory",
-      q:
-        `Remember ${sequence.join(" ")}. ` +
-        `Which emoji was #${index+1}?`,
-      o:options,
-      a:options.indexOf(answer)
-    };
-
-  }
-
-
-  /* =======================================================
-     WORD SCRAMBLE
-     ======================================================= */
-
-  if(type === 9){
-
-    const word =
-      pick(words,r);
-
-    const letters =
-      [...word];
-
-    let scrambled =
-      shuffle(letters,r).join("");
-
-    if(scrambled === word){
-
-      scrambled =
-        letters.reverse().join("");
-
-    }
-
-    const options =
-      shuffle([
-        word,
-        ...words
-          .filter(x=>x!==word)
-          .sort(()=>r()-.5)
-          .slice(0,3)
-      ],r);
-
-    const templates = [
-      `Unscramble: ${scrambled}`,
-      `What word does ${scrambled} make?`,
-      `Can you decode ${scrambled}?`,
-      `Solve this scrambled word: ${scrambled}`,
-      `Rearrange these letters: ${scrambled}`,
-      `Which word matches ${scrambled}?`,
-      `What word is hidden in ${scrambled}?`,
-      `Figure out ${scrambled}.`
-    ];
-
-    return {
-      e:"🔤",
-      t:"Word Puzzle",
-      q:pick(templates,r),
-      o:options,
-      a:options.indexOf(word)
-    };
-
-  }
-
-
-  /* =======================================================
-     RANDOM NUMBER
-     ======================================================= */
-
-  if(type === 10){
-
-    const max =
-      10 + Math.floor(r()*99990);
-
-    const answer =
-      1 + Math.floor(r()*max);
-
-    const values = new Set();
-
-    values.add(answer);
-
-    while(values.size < 4){
-
-      values.add(
-        1 +
-        Math.floor(r()*max)
-      );
-
-    }
-
-    const options =
-      shuffle(
-        [...values].map(String),
-        r
-      );
-
-    return {
-      e:"🎲",
-      t:"Random Number",
-      q:
-        `Guess the secret number from 1–${max}.`,
-      o:options,
-      a:options.indexOf(String(answer))
-    };
-
-  }
-
-
-  /* =======================================================
-     NUMBER PATTERN
-     ======================================================= */
-
-  if(type === 11){
-
-    const start =
-      2 + Math.floor(r()*500);
-
-    const step =
-      1 + Math.floor(r()*100);
-
-    const answer =
-      start + step*4;
-
-    const sequence = [
-      start,
-      start+step,
-      start+step*2,
-      start+step*3
-    ];
-
-    const options =
-      shuffle([
-        answer,
-        answer+step,
-        answer-step,
-        answer+step*2
-      ],r);
-
-    return {
-      e:"🔢",
-      t:"Number Pattern",
-      q:
-        `${sequence.join(", ")}, ?`,
-      o:options.map(String),
-      a:options.indexOf(answer)
-    };
-
-  }
-
-
-  /* =======================================================
-     ODD ONE OUT
-     ======================================================= */
-
-  if(type === 12){
-
-    const a =
-      pick(animals,r);
-
-    const b =
-      pick(
-        animals.filter(x=>x!==a),
-        r
-      );
-
-    const c =
-      pick(animals.filter(
-        x=>x!==a && x!==b
-      ),r);
-
-    const food =
-      pick(foods,r);
-
-    const options =
-      shuffle([
-        a,
-        b,
-        c,
-        food
-      ],r);
-
-    return {
-      e:"🕵️",
-      t:"Odd One Out",
-      q:
-        "Which choice does NOT belong with the others?",
-      o:options,
-      a:options.indexOf(food)
-    };
-
-  }
-
-
-  /* =======================================================
-     SHAPES
-     ======================================================= */
-
-  if(type === 13){
+  if(type === 14){
 
     const answer =
       pick(shapes,r);
@@ -1247,195 +963,18 @@ function question(id){
     return {
       e:"🔷",
       t:"Shapes",
-      q:
-        pick([
-          "Which of these is a shape?",
-          "Pick the geometric shape.",
-          "Which option is a shape?",
-          "Find the shape.",
-          "Which choice names a shape?",
-          "Spot the shape."
-        ],r),
+      q:"Which one is a geometric shape?",
       o:options,
       a:options.indexOf(answer)
     };
-
   }
 
 
-  /* =======================================================
-     LETTER COUNT
-     ======================================================= */
-
-  if(type === 14){
-
-    const word =
-      pick(words,r);
-
-    const answer =
-      word.length;
-
-    const options =
-      shuffle([
-        answer,
-        answer+1,
-        Math.max(1,answer-1),
-        answer+2
-      ],r);
-
-    return {
-      e:"🔤",
-      t:"Letter Count",
-      q:
-        `How many letters are in "${word}"?`,
-      o:options.map(String),
-      a:options.indexOf(answer)
-    };
-
-  }
-
-
-  /* =======================================================
-     ESTIMATION
-     ======================================================= */
+  /* -------------------------------------------------------
+     15. COLOR
+  ------------------------------------------------------- */
 
   if(type === 15){
-
-    const a =
-      10 + Math.floor(r()*990);
-
-    const b =
-      10 + Math.floor(r()*990);
-
-    const actual =
-      a+b;
-
-    const answer =
-      Math.round(actual/10)*10;
-
-    const options =
-      shuffle([
-        answer,
-        answer+10,
-        Math.max(10,answer-10),
-        answer+20
-      ],r);
-
-    return {
-      e:"🎯",
-      t:"Estimation",
-      q:
-        `About how much is ${a} + ${b}?`,
-      o:options.map(String),
-      a:options.indexOf(answer)
-    };
-
-  }
-
-
-  /* =======================================================
-     WHICH COMES NEXT
-     ======================================================= */
-
-  if(type === 16){
-
-    const start =
-      1 + Math.floor(r()*100);
-
-    const step =
-      1 + Math.floor(r()*50);
-
-    const answer =
-      start + step*4;
-
-    const sequence = [
-      start,
-      start+step,
-      start+step*2,
-      start+step*3
-    ];
-
-    const options =
-      shuffle([
-        answer,
-        answer+step,
-        answer-step,
-        answer+2
-      ],r);
-
-    return {
-      e:"➡️",
-      t:"What's Next?",
-      q:
-        `${sequence.join(" → ")} → ?`,
-      o:options.map(String),
-      a:options.indexOf(answer)
-    };
-
-  }
-
-
-  /* =======================================================
-     EMOJI MEANING
-     ======================================================= */
-
-  if(type === 17){
-
-    const meanings = [
-      ["🔥","fire"],
-      ["⭐","star"],
-      ["🍎","apple"],
-      ["🐶","dog"],
-      ["🐱","cat"],
-      ["🚗","car"],
-      ["🚀","rocket"],
-      ["🍕","pizza"],
-      ["🏀","basketball"],
-      ["🌎","Earth"],
-      ["🎮","video game"],
-      ["🎨","art"],
-      ["🎲","dice"],
-      ["🦖","dinosaur"],
-      ["🌈","rainbow"],
-      ["☀️","sun"],
-      ["🌙","moon"],
-      ["🐼","panda"],
-      ["🍉","watermelon"],
-      ["🎸","guitar"]
-    ];
-
-    const chosen =
-      pick(meanings,r);
-
-    const meaningsOnly =
-      meanings.map(x=>x[1]);
-
-    const options =
-      shuffle([
-        chosen[1],
-        ...meaningsOnly
-          .filter(x=>x!==chosen[1])
-          .sort(()=>r()-.5)
-          .slice(0,3)
-      ],r);
-
-    return {
-      e:chosen[0],
-      t:"Emoji",
-      q:
-        `What does ${chosen[0]} represent?`,
-      o:options,
-      a:options.indexOf(chosen[1])
-    };
-
-  }
-
-
-  /* =======================================================
-     COLORS
-     ======================================================= */
-
-  if(type === 18){
 
     const answer =
       pick(colors,r);
@@ -1452,210 +991,585 @@ function question(id){
     return {
       e:"🎨",
       t:"Colors",
-      q:
-        "Which option is a color?",
+      q:"Which one is a color?",
       o:options,
       a:options.indexOf(answer)
     };
-
   }
 
 
-  /* =======================================================
-     DIRECTIONS
-     ======================================================= */
+  /* -------------------------------------------------------
+     16. LETTER COUNT
+  ------------------------------------------------------- */
+
+  if(type === 16){
+
+    const word =
+      pick([
+        "APPLE","BANANA","ROCKET","PLANET",
+        "TURTLE","COMPUTER","RAINBOW",
+        "GUITAR","CASTLE","PENCIL",
+        "DRAGON","CAMERA","MOUNTAIN"
+      ],r);
+
+    const answer =
+      word.length;
+
+    const options =
+      shuffle([
+        answer,
+        answer+1,
+        answer-1,
+        answer+2
+      ],r);
+
+    return {
+      e:"🔤",
+      t:"Words",
+      q:`How many letters are in "${word}"?`,
+      o:options.map(String),
+      a:options.indexOf(answer)
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     17. FIRST LETTER
+  ------------------------------------------------------- */
+
+  if(type === 17){
+
+    const word =
+      pick([
+        "APPLE","BANANA","ROCKET","PLANET",
+        "TURTLE","COMPUTER","RAINBOW",
+        "GUITAR","CASTLE","PENCIL",
+        "DRAGON","CAMERA","MOUNTAIN"
+      ],r);
+
+    const answer =
+      word[0];
+
+    const letters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        .split("")
+        .filter(x=>x!==answer);
+
+    const options =
+      shuffle([
+        answer,
+        ...letters.sort(()=>r()-.5).slice(0,3)
+      ],r);
+
+    return {
+      e:"🔤",
+      t:"Words",
+      q:`What is the first letter of "${word}"?`,
+      o:options,
+      a:options.indexOf(answer)
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     18. LAST LETTER
+  ------------------------------------------------------- */
+
+  if(type === 18){
+
+    const word =
+      pick([
+        "APPLE","BANANA","ROCKET","PLANET",
+        "TURTLE","COMPUTER","RAINBOW",
+        "GUITAR","CASTLE","PENCIL",
+        "DRAGON","CAMERA","MOUNTAIN"
+      ],r);
+
+    const answer =
+      word[word.length-1];
+
+    const letters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        .split("")
+        .filter(x=>x!==answer);
+
+    const options =
+      shuffle([
+        answer,
+        ...letters.sort(()=>r()-.5).slice(0,3)
+      ],r);
+
+    return {
+      e:"🔤",
+      t:"Words",
+      q:`What is the last letter of "${word}"?`,
+      o:options,
+      a:options.indexOf(answer)
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     19. MONTH NUMBER
+  ------------------------------------------------------- */
 
   if(type === 19){
 
+    const index =
+      Math.floor(r()*12);
+
+    const month =
+      months[index];
+
     const answer =
-      pick(directions,r);
+      index+1;
 
     const options =
-      shuffle(
-        directions,
-        r
-      );
+      shuffle([
+        answer,
+        ((answer)%12)+1,
+        ((answer+4)%12)+1,
+        ((answer+7)%12)+1
+      ],r);
 
     return {
-      e:"🧭",
-      t:"Directions",
-      q:
-        `Which direction is "${answer}"?`,
-      o:options,
+      e:"📅",
+      t:"Calendar",
+      q:`Which number month is ${month}?`,
+      o:options.map(String),
       a:options.indexOf(answer)
     };
-
   }
 
 
-  /* =======================================================
-     SEASONS
-     ======================================================= */
+  /* -------------------------------------------------------
+     20. DAYS IN MONTH
+  ------------------------------------------------------- */
 
   if(type === 20){
+
+    const month =
+      pick([
+        "January","March","April","May","June",
+        "July","August","September","October",
+        "November","December"
+      ],r);
+
+    const thirty =
+      [
+        "April","June","September","November"
+      ].includes(month);
+
+    const answer =
+      thirty ? 30 : 31;
+
+    const options =
+      shuffle([
+        answer,
+        answer===31 ? 30 : 31,
+        28,
+        29
+      ],r);
+
+    return {
+      e:"📆",
+      t:"Calendar",
+      q:`How many days does ${month} have?`,
+      o:options.map(String),
+      a:options.indexOf(answer)
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     21. SEASON
+  ------------------------------------------------------- */
+
+  if(type === 21){
 
     const answer =
       pick(seasons,r);
 
     const options =
-      shuffle(
-        seasons,
-        r
-      );
+      shuffle(seasons,r);
 
     return {
       e:"🌤️",
       t:"Seasons",
-      q:
-        "Which of these is a season?",
+      q:"Which one is a season?",
       o:options,
       a:options.indexOf(answer)
     };
-
   }
 
 
-  /* =======================================================
-     BIGGER NUMBER
-     ======================================================= */
-
-  if(type === 21){
-
-    let a =
-      1 + Math.floor(r()*100000);
-
-    let b =
-      1 + Math.floor(r()*100000);
-
-    while(a === b){
-      b =
-        1 + Math.floor(r()*100000);
-    }
-
-    const answer =
-      Math.max(a,b);
-
-    const options =
-      shuffle([
-        String(a),
-        String(b),
-        String(answer+1),
-        String(Math.max(1,answer-1))
-      ],r);
-
-    return {
-      e:"📊",
-      t:"Compare",
-      q:
-        `Which number is larger: ${a} or ${b}?`,
-      o:options,
-      a:options.indexOf(String(answer))
-    };
-
-  }
-
-
-  /* =======================================================
-     SMALLER NUMBER
-     ======================================================= */
+  /* -------------------------------------------------------
+     22. OPPOSITES
+  ------------------------------------------------------- */
 
   if(type === 22){
 
-    let a =
-      1 + Math.floor(r()*100000);
+    const pairs = [
+      ["hot","cold"],
+      ["big","small"],
+      ["fast","slow"],
+      ["up","down"],
+      ["left","right"],
+      ["open","closed"],
+      ["light","dark"],
+      ["happy","sad"],
+      ["young","old"],
+      ["early","late"],
+      ["full","empty"],
+      ["near","far"]
+    ];
 
-    let b =
-      1 + Math.floor(r()*100000);
-
-    while(a === b){
-      b =
-        1 + Math.floor(r()*100000);
-    }
+    const pair =
+      pick(pairs,r);
 
     const answer =
-      Math.min(a,b);
+      pair[1];
+
+    const otherWords =
+      pairs
+        .flat()
+        .filter(x=>x!==pair[0] && x!==answer);
 
     const options =
       shuffle([
-        String(a),
-        String(b),
-        String(answer-1 > 0 ? answer-1 : answer+2),
-        String(Math.max(a,b)+1)
+        answer,
+        ...otherWords
+          .sort(()=>r()-.5)
+          .slice(0,3)
       ],r);
 
     return {
-      e:"📉",
-      t:"Compare",
-      q:
-        `Which number is smaller: ${a} or ${b}?`,
+      e:"↔️",
+      t:"Words",
+      q:`What is the opposite of "${pair[0]}"?`,
       o:options,
-      a:options.indexOf(String(answer))
+      a:options.indexOf(answer)
     };
-
   }
 
 
-  /* =======================================================
-     QUICK CHOICE
-     ======================================================= */
+  /* -------------------------------------------------------
+     23. EMOJI
+  ------------------------------------------------------- */
 
-  const choices = [
-    "sun","moon","star","cloud","tree","river",
-    "mountain","ocean","robot","castle","rocket",
-    "island","bridge","train","airplane","computer",
-    "camera","guitar","book","pencil","planet",
-    "volcano","rainbow","forest","desert","spaceship",
-    "dinosaur","castle","trophy","keyboard"
+  if(type === 23){
+
+    const chosen =
+      pick(emojis,r);
+
+    const answer =
+      chosen[1];
+
+    const options =
+      shuffle([
+        answer,
+        ...emojis
+          .map(x=>x[1])
+          .filter(x=>x!==answer)
+          .sort(()=>r()-.5)
+          .slice(0,3)
+      ],r);
+
+    return {
+      e:chosen[0],
+      t:"Emoji",
+      q:`What does ${chosen[0]} represent?`,
+      o:options,
+      a:options.indexOf(answer)
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     24. MEMORY
+  ------------------------------------------------------- */
+
+  if(type === 24){
+
+    const length =
+      3 + Math.floor(r()*3);
+
+    const sequence = [];
+
+    for(let i=0;i<length;i++){
+      sequence.push(
+        pick(emojis,r)
+      );
+    }
+
+    const index =
+      Math.floor(r()*length);
+
+    const answer =
+      sequence[index][0];
+
+    const options =
+      shuffle([
+        answer,
+        ...emojis
+          .map(x=>x[0])
+          .filter(x=>x!==answer)
+          .sort(()=>r()-.5)
+          .slice(0,3)
+      ],r);
+
+    return {
+      e:"🧠",
+      t:"Memory",
+      q:
+        `Remember ${sequence.map(x=>x[0]).join(" ")}. ` +
+        `Which emoji was #${index+1}?`,
+      o:options,
+      a:options.indexOf(answer)
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     25. LOOK AROUND — COLOR
+  ------------------------------------------------------- */
+
+  if(type === 25){
+
+    const color =
+      pick(colors,r);
+
+    return {
+      e:"👀",
+      t:"Look Around",
+      q:`Look around. Can you find something ${color}?`,
+      o:[
+        "I found one",
+        "I don't see one",
+        "Maybe",
+        "Not sure"
+      ],
+      a:null
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     26. LOOK AROUND — OBJECT
+  ------------------------------------------------------- */
+
+  if(type === 26){
+
+    const object =
+      pick(objects,r);
+
+    return {
+      e:"👀",
+      t:"Look Around",
+      q:`Look around. Can you spot a ${object}?`,
+      o:[
+        "Yes",
+        "No",
+        "Maybe",
+        "Not sure"
+      ],
+      a:null
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     27. ESTIMATION
+  ------------------------------------------------------- */
+
+  if(type === 27){
+
+    const a =
+      10 + Math.floor(r()*490);
+
+    const b =
+      10 + Math.floor(r()*490);
+
+    const exact =
+      a+b;
+
+    const answer =
+      Math.round(exact/10)*10;
+
+    const options =
+      shuffle([
+        answer,
+        answer+10,
+        answer-10,
+        answer+20
+      ],r);
+
+    return {
+      e:"🎯",
+      t:"Estimation",
+      q:`About how much is ${a} + ${b}?`,
+      o:options.map(String),
+      a:options.indexOf(answer)
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     28. EVEN OR ODD
+  ------------------------------------------------------- */
+
+  if(type === 28){
+
+    const number =
+      1 + Math.floor(r()*10000);
+
+    const answer =
+      number%2===0
+        ? "Even"
+        : "Odd";
+
+    const options =
+      shuffle([
+        "Even",
+        "Odd"
+      ],r);
+
+    return {
+      e:"🔢",
+      t:"Numbers",
+      q:`Is ${number} even or odd?`,
+      o:options,
+      a:options.indexOf(answer)
+    };
+  }
+
+
+  /* -------------------------------------------------------
+     29. MULTIPLE CHOICE KNOWLEDGE
+  ------------------------------------------------------- */
+
+  const facts = [
+
+    {
+      q:"Which animal is known for having a long trunk?",
+      a:"Elephant",
+      o:["Elephant","Tiger","Rabbit","Penguin"]
+    },
+
+    {
+      q:"Which planet do we live on?",
+      a:"Earth",
+      o:["Earth","Mars","Jupiter","Venus"]
+    },
+
+    {
+      q:"Which shape has three sides?",
+      a:"Triangle",
+      o:["Triangle","Square","Circle","Rectangle"]
+    },
+
+    {
+      q:"Which season usually comes after summer?",
+      a:"Autumn",
+      o:["Autumn","Spring","Winter","Summer"]
+    },
+
+    {
+      q:"Which animal is famous for black-and-white stripes?",
+      a:"Zebra",
+      o:["Zebra","Lion","Elephant","Fox"]
+    },
+
+    {
+      q:"Which food is commonly made from dough and tomato sauce?",
+      a:"Pizza",
+      o:["Pizza","Salad","Apple","Carrot"]
+    },
+
+    {
+      q:"Which object is normally used to tell time?",
+      a:"Clock",
+      o:["Clock","Pencil","Chair","Shoe"]
+    },
+
+    {
+      q:"Which direction is opposite of left?",
+      a:"Right",
+      o:["Right","Up","Down","Forward"]
+    },
+
+    {
+      q:"Which animal can fly?",
+      a:"Eagle",
+      o:["Eagle","Elephant","Turtle","Horse"]
+    },
+
+    {
+      q:"Which one is used to write on paper?",
+      a:"Pencil",
+      o:["Pencil","Spoon","Pillow","Shoe"]
+    },
+
+    {
+      q:"Which one is a fruit?",
+      a:"Apple",
+      o:["Apple","Carrot","Potato","Broccoli"]
+    },
+
+    {
+      q:"Which one is a mode of transportation?",
+      a:"Train",
+      o:["Train","Table","Book","Lamp"]
+    }
+
   ];
 
-  const answer =
-    pick(choices,r);
-
-  const options =
-    shuffle([
-      answer,
-      ...choices
-        .filter(x=>x!==answer)
-        .sort(()=>r()-.5)
-        .slice(0,3)
-    ],r);
-
-  const templates = [
-    "Pick the secret choice.",
-    "Which one did the app select?",
-    "Can you guess the selected item?",
-    "Which choice is hiding as the answer?",
-    "Find the app's choice.",
-    "What did the randomizer pick?"
-  ];
+  const fact =
+    pick(facts,r);
 
   return {
-    e:"🎯",
-    t:"Quick Choice",
-    q:pick(templates,r),
-    o:options,
-    a:options.indexOf(answer)
+    e:"🧩",
+    t:"Quick Quiz",
+    q:fact.q,
+    o:shuffle(fact.o,r),
+    a:0
   };
 
 }
 
 
 /* =========================================================
-   CREATE CARD
-   ========================================================= */
+   IMPORTANT FIX FOR FACT QUESTIONS
+========================================================= */
 
-function makeCard(id){
+function makeQuestion(id){
 
   const d =
     question(id);
 
-
   /*
-    A complete fingerprint includes:
-    type + question + every answer.
-
-    This means an accidental duplicate gets rejected.
+    Some questions have their answer stored before
+    their options are shuffled. Recalculate the index
+    safely using the actual answer text.
   */
+
+  if(d._answer !== undefined){
+    d.a =
+      d.o.indexOf(d._answer);
+  }
+
+  return d;
+}
+
+
+/* =========================================================
+   CREATE CARD
+========================================================= */
+
+function makeCard(id){
+
+  const d =
+    makeQuestion(id);
 
   const fingerprint =
     d.t +
@@ -1664,19 +1578,11 @@ function makeCard(id){
     "|" +
     d.o.join("|");
 
-
-  if(
-    seenChallenges.has(fingerprint)
-  ){
-
+  if(seenChallenges.has(fingerprint)){
     return false;
-
   }
 
-
-  seenChallenges.add(
-    fingerprint
-  );
+  seenChallenges.add(fingerprint);
 
 
   const card =
@@ -1718,7 +1624,7 @@ function makeCard(id){
   `;
 
 
-  const optionsContainer =
+  const options =
     inner.querySelector(".options");
 
   const result =
@@ -1729,134 +1635,99 @@ function makeCard(id){
     false;
 
 
-  d.o.forEach(
-    (optionText,index) => {
+  d.o.forEach((text,index)=>{
 
-      const button =
-        document.createElement("button");
+    const button =
+      document.createElement("button");
 
-      button.className =
-        "option";
+    button.className =
+      "option";
 
-      button.textContent =
-        optionText;
-
-
-      button.onclick = () => {
-
-        if(answered){
-          return;
-        }
+    button.textContent =
+      text;
 
 
-        answered = true;
+    button.onclick = ()=>{
+
+      if(answered){
+        return;
+      }
+
+      answered = true;
 
 
-        /*
-          Disable every option immediately so
-          the user cannot answer twice.
-        */
-
-        [...optionsContainer.children]
-          .forEach(
-            b => {
-              b.disabled = true;
-            }
-          );
-
-
-        /* LOOK AROUND */
-
-        if(d.a === null){
-
-          button.classList.add(
-            "selected"
-          );
-
-          result.textContent =
-            "Nice choice 😎";
-
-          streak++;
-
-        }
-
-
-        /* CORRECT */
-
-        else if(index === d.a){
-
-          button.classList.add(
-            "correct"
-          );
-
-          result.textContent =
-            "✅ Correct!";
-
-          streak++;
-
-        }
-
-
-        /* WRONG */
-
-        else{
-
-          button.classList.add(
-            "wrong"
-          );
-
-          if(
-            optionsContainer.children[d.a]
-          ){
-
-            optionsContainer
-              .children[d.a]
-              .classList.add(
-                "correct"
-              );
-
-          }
-
-          result.textContent =
-            "❌ Not quite — keep going!";
-
-          streak = 0;
-
-        }
-
-
-        streakEl.textContent =
-          "🔥 " + streak;
-
-      };
-
-
-      optionsContainer.appendChild(
-        button
+      [...options.children].forEach(
+        b => b.disabled = true
       );
 
-    }
-  );
+
+      if(d.a === null){
+
+        button.classList.add(
+          "selected"
+        );
+
+        result.textContent =
+          "Nice! 👀";
+
+        streak++;
+
+      }
+
+      else if(index === d.a){
+
+        button.classList.add(
+          "correct"
+        );
+
+        result.textContent =
+          "✅ Correct!";
+
+        streak++;
+
+      }
+
+      else{
+
+        button.classList.add(
+          "wrong"
+        );
+
+        if(options.children[d.a]){
+          options.children[d.a]
+            .classList.add("correct");
+        }
+
+        result.textContent =
+          "❌ Not quite — keep going!";
+
+        streak = 0;
+
+      }
 
 
-  card.appendChild(
-    inner
-  );
+      streakEl.textContent =
+        "🔥 " + streak;
+
+    };
 
 
-  feed.appendChild(
-    card
-  );
+    options.appendChild(button);
 
+  });
+
+
+  card.appendChild(inner);
+
+  feed.appendChild(card);
 
   return true;
-
 }
 
 
 /* =========================================================
    LOAD BATCH
-   ========================================================= */
+========================================================= */
 
 function addBatch(){
 
@@ -1864,100 +1735,64 @@ function addBatch(){
     return;
   }
 
-
   let added = 0;
-
 
   while(
     added < BATCH_SIZE &&
     generated < TOTAL
   ){
 
-    /*
-      Circular ID system.
-
-      This means starting at any random ID still allows
-      the app to eventually cover all 1,000,000 IDs.
-    */
-
     const id =
-      (
-        startId +
-        generated
-      ) % TOTAL;
+      (startId + generated) % TOTAL;
 
-
-    const success =
-      makeCard(id);
-
-
-    generated++;
-
-
-    if(success){
+    if(makeCard(id)){
       added++;
     }
 
+    generated++;
   }
 
-
   updateProgress();
-
 }
 
 
 /* =========================================================
    PROGRESS
-   ========================================================= */
+========================================================= */
 
 function updateProgress(){
 
   const percent =
     Math.min(
-      generated / TOTAL,
+      generated/TOTAL,
       1
     );
-
 
   const rail =
     document.getElementById(
       "progressRail"
     );
 
-
-  const railHeight =
-    rail.clientHeight;
-
-
-  const thumbHeight =
-    progressThumb.offsetHeight;
-
-
-  const usableHeight =
+  const usable =
     Math.max(
       0,
-      railHeight-thumbHeight
+      rail.clientHeight -
+      progressThumb.offsetHeight
     );
 
-
   progressThumb.style.top =
-    (
-      percent *
-      usableHeight
-    ) + "px";
-
+    (percent*usable)+"px";
 
   progressText.textContent =
     generated.toLocaleString() +
     " / " +
     TOTAL.toLocaleString();
-
 }
 
 
 /* =========================================================
    CLEANUP
-   ========================================================= */
+========================================================= */
 
 function cleanupCards(){
 
@@ -1969,141 +1804,86 @@ function cleanupCards(){
     const first =
       feed.children[0];
 
-
-    /*
-      Only remove cards that are safely behind
-      the user's current position.
-    */
-
     if(
       first.getBoundingClientRect().bottom
       >= -1500
     ){
-
       break;
-
     }
-
 
     const height =
       first.offsetHeight;
 
-
     first.remove();
 
-
-    /*
-      Compensate for removing the card so the
-      user's scroll position does not jump.
-    */
-
-    feed.scrollTop -=
-      height;
-
+    feed.scrollTop -= height;
   }
-
 }
 
 
 /* =========================================================
    SCROLL
-   ========================================================= */
+========================================================= */
 
 feed.addEventListener(
   "scroll",
 
-  () => {
-
+  ()=>{
+    
     const nearBottom =
       feed.scrollTop +
       feed.clientHeight >=
       feed.scrollHeight -
-      feed.clientHeight * 5;
-
+      feed.clientHeight*5;
 
     if(
       nearBottom &&
       generated < TOTAL
     ){
-
       addBatch();
-
     }
 
-
     cleanupCards();
-
     updateProgress();
 
   },
 
-  {
-    passive:true
-  }
-
+  {passive:true}
 );
 
 
 /* =========================================================
-   INITIAL LOAD
-   ========================================================= */
+   START
+========================================================= */
 
 addBatch();
 
 
 /* =========================================================
-   KEEP THE FEED FULL
-   ========================================================= */
+   KEEP FEED FULL
+========================================================= */
 
-function ensureEnoughCards(){
+setInterval(()=>{
 
   if(
     generated < TOTAL &&
     feed.scrollHeight <
-    feed.clientHeight * 3
+    feed.clientHeight*3
   ){
-
     addBatch();
-
   }
 
-}
-
-
-setInterval(
-  ensureEnoughCards,
-  1000
-);
+},1000);
 
 
 /* =========================================================
    RESIZE
-   ========================================================= */
+========================================================= */
 
 window.addEventListener(
   "resize",
-
-  () => {
-
-    ensureEnoughCards();
-
+  ()=>{
     updateProgress();
-
-  }
-);
-
-
-/* =========================================================
-   FINISHED
-   ========================================================= */
-
-window.addEventListener(
-  "load",
-
-  () => {
-
-    updateProgress();
-
   }
 );
 
@@ -2111,3 +1891,4 @@ window.addEventListener(
 
 </body>
 </html>
+```
