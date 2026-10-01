@@ -28,12 +28,7 @@
 
 <title>Swipe Break</title>
 
-
 <style>
-
-/* ==========================================
-   BASIC
-========================================== */
 
 *{
   box-sizing:border-box;
@@ -49,7 +44,6 @@ body{
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-
   height:100%;
   overflow:hidden;
 }
@@ -60,9 +54,7 @@ body{
 }
 
 
-/* ==========================================
-   HEADER
-========================================== */
+/* HEADER */
 
 header{
   height:58px;
@@ -86,12 +78,9 @@ header{
 }
 
 
-/* ==========================================
-   FEED
-========================================== */
+/* FEED */
 
 #feed{
-
   height:calc(100% - 58px);
 
   overflow-y:auto;
@@ -110,12 +99,9 @@ header{
 }
 
 
-/* ==========================================
-   CARD
-========================================== */
+/* CARD */
 
 .card{
-
   height:100%;
   min-height:520px;
 
@@ -130,9 +116,7 @@ header{
   padding:24px;
 }
 
-
 .inner{
-
   width:min(520px,100%);
 
   background:#171717;
@@ -149,15 +133,12 @@ header{
     0 12px 50px rgba(0,0,0,.25);
 }
 
-
 .emoji{
   font-size:64px;
   line-height:1.1;
 }
 
-
 .type{
-
   font-size:13px;
 
   color:#999;
@@ -169,9 +150,7 @@ header{
   margin-top:12px;
 }
 
-
 .title{
-
   font-size:28px;
 
   font-weight:850;
@@ -181,9 +160,7 @@ header{
   margin-top:10px;
 }
 
-
 .hint{
-
   color:#aaa;
 
   margin:10px 0 18px;
@@ -191,17 +168,12 @@ header{
   line-height:1.4;
 }
 
-
 .options{
-
   display:grid;
-
   gap:10px;
 }
 
-
 .option{
-
   width:100%;
 
   padding:14px;
@@ -229,47 +201,31 @@ header{
   transform:scale(.98);
 }
 
-
 .option.selected{
-
   outline:2px solid #fff;
-
   background:#303030;
 }
 
-
 .option.correct{
-
   background:#17351f;
-
   border-color:#4caf67;
 }
 
-
 .option.wrong{
-
   background:#351919;
-
   border-color:#d75a5a;
 }
 
-
 .result{
-
   min-height:22px;
-
   margin-top:12px;
-
   font-weight:700;
 }
 
 
-/* ==========================================
-   BOTTOM SWIPE MESSAGE
-========================================== */
+/* SWIPE MESSAGE */
 
 .swipe{
-
   position:fixed;
 
   bottom:12px;
@@ -289,12 +245,9 @@ header{
 }
 
 
-/* ==========================================
-   PROGRESS BAR
-========================================== */
+/* PROGRESS */
 
 #progressRail{
-
   position:fixed;
 
   right:5px;
@@ -314,9 +267,7 @@ header{
   pointer-events:none;
 }
 
-
 #progressThumb{
-
   position:absolute;
 
   top:0;
@@ -332,14 +283,9 @@ header{
   background:#777;
 
   border-radius:99px;
-
-  transition:
-    top .15s linear;
 }
 
-
 #progressText{
-
   position:fixed;
 
   right:12px;
@@ -355,37 +301,11 @@ header{
   pointer-events:none;
 }
 
-
-/* ==========================================
-   START CARD
-========================================== */
-
-.startButton{
-
-  margin-top:16px;
-
-  padding:14px 22px;
-
-  border:1px solid #444;
-
-  border-radius:14px;
-
-  background:#242424;
-
-  color:#fff;
-
-  font-weight:800;
-
-  font-size:16px;
-}
-
 </style>
 
 </head>
 
-
 <body>
-
 
 <header>
 
@@ -399,19 +319,15 @@ header{
 
 </header>
 
-
 <div id="feed"></div>
-
 
 <div id="progressRail">
   <div id="progressThumb"></div>
 </div>
 
-
 <div id="progressText">
-  0
+  0 / 1,000,000
 </div>
-
 
 <div class="swipe">
   ↑ swipe for another challenge
@@ -420,17 +336,18 @@ header{
 
 <script>
 
+/* =========================================================
+   SWIPE BREAK
+   =========================================================
 
-// ============================================================
-// SWIPE BREAK
-// ============================================================
-//
-// 1,000,000 possible challenge IDs
-//
-// Challenges are generated deterministically from their ID,
-// but the app starts at a random point every session.
-//
-// ============================================================
+   1,000,000 UNIQUE CHALLENGE IDS
+
+   The challenge number is randomly selected when the
+   session starts.
+
+   Every ID produces its own deterministic challenge.
+
+   ========================================================= */
 
 
 const TOTAL = 1000000;
@@ -440,7 +357,7 @@ const BATCH_SIZE = 1000;
 const MAX_DOM_CARDS = 100;
 
 
-// Random starting point every time the app opens.
+/* RANDOM START */
 
 const startId =
   Math.floor(Math.random() * TOTAL);
@@ -450,13 +367,10 @@ let generated = 0;
 
 let streak = 0;
 
-let answeredCards = 0;
 
+/* Prevent exact duplicates during a session */
 
-// Exact challenge fingerprints already displayed.
-
-const seenChallenges =
-  new Set();
+const seenChallenges = new Set();
 
 
 const feed =
@@ -472,454 +386,244 @@ const progressText =
   document.getElementById("progressText");
 
 
-// ============================================================
-// SAFE TEXT
-// ============================================================
+/* =========================================================
+   RANDOM NUMBER GENERATOR
+   ========================================================= */
 
-const esc = s =>
-
-  String(s).replace(
-    /[&<>"']/g,
-
-    c => ({
-
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#39;"
-
-    }[c])
-  );
-
-
-// ============================================================
-// RANDOM GENERATOR
-// ============================================================
-
-const rng = seed => {
+function rng(seed){
 
   let x =
     (seed + 0x6D2B79F5) >>> 0;
 
-  return () => {
+  return function(){
 
     x =
       Math.imul(
-        x ^ x >>> 15,
+        x ^ (x >>> 15),
         1 | x
       );
 
     x ^=
       x +
       Math.imul(
-        x ^ x >>> 7,
+        x ^ (x >>> 7),
         61 | x
       );
 
     return (
-      (x ^ x >>> 14) >>> 0
+      (x ^ (x >>> 14)) >>> 0
     ) / 4294967296;
 
   };
 
-};
+}
 
 
-// ============================================================
-// HELPERS
-// ============================================================
+/* =========================================================
+   HELPERS
+   ========================================================= */
 
-const pick = (array,r) =>
-  array[
-    Math.floor(
-      r() * array.length
-    )
+function pick(arr,r){
+
+  return arr[
+    Math.floor(r() * arr.length)
   ];
 
+}
 
-const shuffle = (array,r) => {
 
-  array = [...array];
+function shuffle(arr,r){
+
+  const a = [...arr];
 
   for(
-    let i=array.length-1;
+    let i=a.length-1;
     i>0;
     i--
   ){
 
     const j =
-      Math.floor(
-        r() * (i+1)
-      );
+      Math.floor(r() * (i+1));
 
     [
-      array[i],
-      array[j]
+      a[i],
+      a[j]
     ] =
     [
-      array[j],
-      array[i]
+      a[j],
+      a[i]
     ];
 
   }
 
-  return array;
-};
+  return a;
+
+}
 
 
-const different = (
-  array,
-  value,
-  amount,
-  r
-) =>
-
-  shuffle(
-    array.filter(
-      x => x !== value
-    ),
-    r
-  ).slice(0,amount);
-
-
-const uniqueNumbers = (
+function uniqueWrongNumbers(
+  answer,
   count,
-  min,
-  max,
+  spread,
   r
-) => {
+){
 
-  const set = new Set();
+  const values = new Set();
 
-  while(set.size < count){
+  while(values.size < count){
 
-    set.add(
-      min +
+    let n =
+      answer +
       Math.floor(
-        r() * (max-min+1)
-      )
-    );
+        (r() * 2 - 1) *
+        spread
+      );
+
+    n = Math.max(0,n);
+
+    if(n !== answer){
+      values.add(n);
+    }
 
   }
 
-  return [...set];
+  return [...values];
 
-};
+}
 
 
-// ============================================================
-// DATA
-// ============================================================
+function esc(s){
+
+  return String(s).replace(
+    /[&<>"']/g,
+
+    c => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[c])
+  );
+
+}
+
+
+/* =========================================================
+   DATA
+   ========================================================= */
 
 const colors = [
-
-  "red",
-  "blue",
-  "green",
-  "yellow",
-  "orange",
-  "purple",
-  "black",
-  "white",
-  "pink",
-  "brown",
-  "gray",
-  "silver",
-  "gold",
-  "cyan",
-  "teal",
-  "navy",
-  "maroon",
-  "beige"
-
+  "red","blue","green","yellow","orange","purple",
+  "black","white","pink","brown","gray","silver",
+  "gold","cyan","teal","navy","maroon","beige"
 ];
-
 
 const animals = [
-
-  "cat",
-  "dog",
-  "penguin",
-  "frog",
-  "turtle",
-  "rabbit",
-  "panda",
-  "koala",
-  "lion",
-  "tiger",
-  "elephant",
-  "giraffe",
-  "zebra",
-  "fox",
-  "wolf",
-  "bear",
-  "otter",
-  "dolphin",
-  "octopus",
-  "shark",
-  "horse",
-  "monkey",
-  "kangaroo",
-  "parrot",
-  "owl",
-  "eagle",
-  "snake",
-  "lizard",
-  "hamster",
-  "squirrel",
-  "deer",
-  "goat",
-  "cow",
-  "pig",
-  "chicken"
-
+  "cat","dog","penguin","frog","turtle","rabbit",
+  "panda","koala","lion","tiger","elephant","giraffe",
+  "zebra","fox","wolf","bear","otter","dolphin",
+  "octopus","shark","horse","monkey","kangaroo","parrot",
+  "owl","eagle","snake","lizard","hamster","squirrel",
+  "deer","goat","cow","pig","chicken","seal","whale",
+  "camel","raccoon","hedgehog","bat","bee","butterfly"
 ];
-
 
 const foods = [
-
-  "pizza",
-  "burger",
-  "apple",
-  "banana",
-  "popcorn",
-  "taco",
-  "cookie",
-  "donut",
-  "ice cream",
-  "watermelon",
-  "pancake",
-  "sandwich",
-  "hot dog",
-  "strawberry",
-  "pretzel",
-  "orange",
-  "grape",
-  "muffin",
-  "waffle",
-  "cheese",
-  "carrot",
-  "broccoli",
-  "chocolate",
-  "cereal",
-  "pasta",
-  "rice",
-  "toast",
-  "cupcake",
-  "blueberry",
-  "pineapple"
-
+  "pizza","burger","apple","banana","popcorn",
+  "taco","cookie","donut","ice cream","watermelon",
+  "pancake","sandwich","hot dog","strawberry","pretzel",
+  "orange","grape","muffin","waffle","cheese","carrot",
+  "broccoli","chocolate","cereal","pasta","rice","toast",
+  "cupcake","blueberry","pineapple","mango","pear",
+  "peach","cherry","salad","soup","fries","burrito",
+  "bagel","yogurt","melon","kiwi"
 ];
-
 
 const countries = [
-
-  "Canada",
-  "Brazil",
-  "Japan",
-  "Italy",
-  "France",
-  "Mexico",
-  "Australia",
-  "India",
-  "Egypt",
-  "Greece",
-  "Spain",
-  "Germany",
-  "Norway",
-  "Kenya",
-  "Chile",
-  "Peru",
-  "China",
-  "South Korea",
-  "Ireland",
-  "New Zealand",
-  "Argentina",
-  "Portugal",
-  "Sweden",
-  "Finland",
-  "Iceland",
-  "Thailand",
-  "Vietnam",
-  "Turkey",
-  "Poland",
-  "Denmark",
-  "Austria",
-  "Switzerland",
-  "Belgium",
-  "Colombia",
-  "Indonesia",
-  "Malaysia",
-  "Singapore",
-  "Nepal"
-
+  "Canada","Brazil","Japan","Italy","France","Mexico",
+  "Australia","India","Egypt","Greece","Spain","Germany",
+  "Norway","Kenya","Chile","Peru","China","South Korea",
+  "Ireland","New Zealand","Argentina","Portugal","Sweden",
+  "Finland","Iceland","Thailand","Vietnam","Turkey","Poland",
+  "Denmark","Austria","Switzerland","Belgium","Colombia",
+  "Indonesia","Malaysia","Singapore","Nepal","Morocco",
+  "Croatia","Romania","Ukraine","Philippines"
 ];
-
 
 const games = [
-
-  "Minecraft",
-  "Roblox",
-  "Fortnite",
-  "Terraria",
-  "Mario Kart",
-  "Rocket League",
-  "Pokémon",
-  "Among Us",
-  "Super Mario Bros.",
-  "The Legend of Zelda",
-  "Geometry Dash",
-  "Fall Guys",
-  "Stardew Valley",
-  "Animal Crossing",
-  "Tetris",
-  "Portal",
-  "Cuphead",
-  "Splatoon",
-  "Sonic the Hedgehog",
-  "Overcooked",
-  "Pikmin",
-  "Kirby",
-  "Celeste",
-  "Hollow Knight",
-  "Rayman",
-  "Pac-Man",
-  "Donkey Kong",
-  "Metroid",
-  "Luigi's Mansion"
-
+  "Minecraft","Roblox","Fortnite","Terraria","Mario Kart",
+  "Rocket League","Pokémon","Among Us","Super Mario Bros.",
+  "The Legend of Zelda","Geometry Dash","Fall Guys",
+  "Stardew Valley","Animal Crossing","Tetris","Portal",
+  "Cuphead","Splatoon","Sonic the Hedgehog","Overcooked",
+  "Pikmin","Kirby","Celeste","Hollow Knight","Rayman",
+  "Pac-Man","Donkey Kong","Metroid","Luigi's Mansion",
+  "Mario Party","Street Fighter","Super Smash Bros.",
+  "Plants vs. Zombies","Clash Royale","Subnautica"
 ];
-
 
 const emojis = [
-
-  "🍎",
-  "🐸",
-  "⭐",
-  "🚗",
-  "🍕",
-  "🎮",
-  "🦖",
-  "🚀",
-  "🌎",
-  "⚡",
-  "🎈",
-  "🍪",
-  "🐙",
-  "🏀",
-  "🎲",
-  "🌈",
-  "🔥",
-  "❄️",
-  "🐱",
-  "🐶",
-  "🍔",
-  "🌙",
-  "☀️",
-  "🎵",
-  "🎯",
-  "🧩",
-  "🚲",
-  "🏆",
-  "🎨",
-  "🛸",
-  "🌟",
-  "🍩",
-  "🦄",
-  "🐼",
-  "🍉"
-
+  "🍎","🐸","⭐","🚗","🍕","🎮","🦖","🚀",
+  "🌎","⚡","🎈","🍪","🐙","🏀","🎲","🌈",
+  "🔥","❄️","🐱","🐶","🍔","🌙","☀️","🎵",
+  "🎯","🧩","🚲","🏆","🎨","🛸","🌟","🍩",
+  "🦄","🐼","🍉","🚁","🎸","📚","💎","🌋"
 ];
-
 
 const words = [
-
-  "APPLE",
-  "ROBOT",
-  "GAMER",
-  "PLANET",
-  "CASTLE",
-  "BANANA",
-  "TIGER",
-  "PUZZLE",
-  "COMPUTER",
-  "DRAGON",
-  "MANGO",
-  "ROCKET",
-  "PIXEL",
-  "MONKEY",
-  "ORANGE",
-  "BASKET",
-  "PENCIL",
-  "WINDOW",
-  "THUNDER",
-  "GALAXY",
-  "JUNGLE",
-  "MACHINE",
-  "RAINBOW",
-  "SPIDER",
-  "COOKIE",
-  "TURTLE",
-  "CAMERA",
-  "MYSTERY",
-  "PLANET",
-  "GUITAR"
-
+  "APPLE","ROBOT","GAMER","PLANET","CASTLE","BANANA",
+  "TIGER","PUZZLE","COMPUTER","DRAGON","MANGO","ROCKET",
+  "PIXEL","MONKEY","ORANGE","BASKET","PENCIL","WINDOW",
+  "THUNDER","GALAXY","JUNGLE","MACHINE","RAINBOW","SPIDER",
+  "COOKIE","TURTLE","CAMERA","MYSTERY","GUITAR",
+  "CASTLE","OCEAN","FOREST","PLANET","ROBOT","LIGHT",
+  "BRIDGE","SCHOOL","MUSIC","SUMMER","WINTER","FLOWER"
 ];
-
 
 const shapes = [
-
-  "circle",
-  "square",
-  "triangle",
-  "star",
-  "diamond",
-  "rectangle",
-  "oval",
-  "hexagon",
-  "heart",
-  "arrow"
-
+  "circle","square","triangle","star","diamond",
+  "rectangle","oval","hexagon","heart","arrow",
+  "pentagon","octagon"
 ];
-
 
 const directions = [
-
-  "left",
-  "right",
-  "up",
-  "down"
-
+  "left","right","up","down"
 ];
-
 
 const seasons = [
+  "spring","summer","autumn","winter"
+];
 
-  "spring",
-  "summer",
-  "autumn",
-  "winter"
-
+const objects = [
+  "book","chair","table","phone","computer",
+  "lamp","door","window","backpack","pencil",
+  "shoe","shirt","bottle","cup","toy","clock",
+  "remote","keyboard","mouse","headphones",
+  "box","picture","plant","blanket","pillow"
 ];
 
 
-// ============================================================
-// QUESTION GENERATOR
-// ============================================================
+/* =========================================================
+   UNIQUE QUESTION GENERATOR
+   ========================================================= */
 
 function question(id){
 
   const r = rng(id);
 
+  /*
+    Using id combinations here means there are far more
+    possible questions than the 1,000,000 IDs.
+  */
+
   const type =
     id % 24;
 
 
-  // ========================================================
-  // 0 — MULTIPLICATION
-  // ========================================================
+  /* =======================================================
+     MULTIPLICATION
+     ======================================================= */
 
   if(type === 0){
 
@@ -927,20 +631,26 @@ function question(id){
       2 + Math.floor(r()*98);
 
     const b =
-      2 + Math.floor(r()*25);
+      2 + Math.floor(r()*48);
 
-    const ans = a*b;
+    const answer =
+      a*b;
 
-    const opts =
-      shuffle([
-        ans,
-        ans+b,
-        ans-a,
-        ans+10
-      ],r);
+    const wrong =
+      uniqueWrongNumbers(
+        answer,
+        3,
+        Math.max(10,Math.floor(answer*.15)),
+        r
+      );
+
+    const options =
+      shuffle(
+        [answer,...wrong],
+        r
+      );
 
     const templates = [
-
       `What is ${a} × ${b}?`,
       `Solve ${a} × ${b}.`,
       `Calculate ${a} times ${b}.`,
@@ -949,45 +659,51 @@ function question(id){
       `Work out ${a} × ${b}.`,
       `Find the product of ${a} and ${b}.`,
       `Multiply ${a} by ${b}.`,
-      `Can you solve ${a} × ${b}?`
-
+      `Can you solve ${a} × ${b}?`,
+      `What is the product of ${a} and ${b}?`
     ];
 
     return {
       e:"🔢",
       t:"Fast Math",
       q:pick(templates,r),
-      o:opts.map(String),
-      a:opts.indexOf(ans)
+      o:options.map(String),
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 1 — ADDITION
-  // ========================================================
+  /* =======================================================
+     ADDITION
+     ======================================================= */
 
   if(type === 1){
 
     const a =
-      1 + Math.floor(r()*9999);
+      1 + Math.floor(r()*99999);
 
     const b =
-      1 + Math.floor(r()*9999);
+      1 + Math.floor(r()*99999);
 
-    const ans = a+b;
+    const answer =
+      a+b;
 
-    const opts =
-      shuffle([
-        ans,
-        ans+1,
-        ans-1,
-        ans+10
-      ],r);
+    const wrong =
+      uniqueWrongNumbers(
+        answer,
+        3,
+        100,
+        r
+      );
+
+    const options =
+      shuffle(
+        [answer,...wrong],
+        r
+      );
 
     const templates = [
-
       `What is ${a} + ${b}?`,
       `Solve: ${a} + ${b}`,
       `Calculate ${a} plus ${b}.`,
@@ -997,44 +713,51 @@ function question(id){
       `Quick addition: ${a} + ${b} = ?`,
       `Work out ${a} plus ${b}.`,
       `What do you get when you add ${a} and ${b}?`
-
     ];
 
     return {
       e:"➕",
       t:"Addition",
       q:pick(templates,r),
-      o:opts.map(String),
-      a:opts.indexOf(ans)
+      o:options.map(String),
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 2 — SUBTRACTION
-  // ========================================================
+  /* =======================================================
+     SUBTRACTION
+     ======================================================= */
 
   if(type === 2){
 
     const a =
-      100 + Math.floor(r()*9900);
+      100 +
+      Math.floor(r()*99900);
 
     const b =
-      1 + Math.floor(r()*(a-1));
+      1 +
+      Math.floor(r()*(a-1));
 
-    const ans = a-b;
+    const answer =
+      a-b;
 
-    const opts =
-      shuffle([
-        ans,
-        ans+b,
-        ans-1,
-        ans+10
-      ],r);
+    const wrong =
+      uniqueWrongNumbers(
+        answer,
+        3,
+        100,
+        r
+      );
+
+    const options =
+      shuffle(
+        [answer,...wrong],
+        r
+      );
 
     const templates = [
-
       `What is ${a} − ${b}?`,
       `Solve: ${a} − ${b}`,
       `Calculate ${a} minus ${b}.`,
@@ -1043,66 +766,48 @@ function question(id){
       `What remains after taking ${b} from ${a}?`,
       `Quick subtraction: ${a} − ${b} = ?`,
       `Work out ${a} minus ${b}.`
-
     ];
 
     return {
       e:"➖",
       t:"Subtraction",
       q:pick(templates,r),
-      o:opts.map(String),
-      a:opts.indexOf(ans)
+      o:options.map(String),
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 3 — LOOK AROUND
-  // ========================================================
+  /* =======================================================
+     LOOK AROUND
+     ======================================================= */
 
   if(type === 3){
 
     const color =
       pick(colors,r);
 
-    const objectTypes = [
-
-      "object",
-      "thing",
-      "item",
-      "decoration",
-      "book",
-      "screen",
-      "piece of furniture",
-      "device",
-      "toy",
-      "container",
-      "chair",
-      "table",
-      "piece of clothing"
-
-    ];
+    const object =
+      pick(objects,r);
 
     const templates = [
-
       `Can you find something ${color}?`,
       `Can you spot something ${color}?`,
       `Do you see anything ${color}?`,
       `Look around for something ${color}.`,
       `Find a ${color} object nearby.`,
-      `Try to spot a ${color} ${pick(objectTypes,r)}.`,
+      `Try to spot a ${color} ${object}.`,
       `Look carefully. Can you see something ${color}?`,
       `Search your surroundings for something ${color}.`,
-      `Is there a ${color} ${pick(objectTypes,r)} nearby?`,
+      `Is there a ${color} ${object} nearby?`,
       `What ${color} object can you spot?`,
       `Take a look around and find something ${color}.`,
       `Can you identify something ${color} in your view?`,
-      `Spot a ${color} ${pick(objectTypes,r)}.`,
+      `Spot a ${color} ${object}.`,
       `Look nearby and find a ${color} thing.`,
       `Find something that has the color ${color}.`,
       `Can you see a ${color} object without moving?`
-
     ];
 
     return {
@@ -1121,202 +826,182 @@ function question(id){
   }
 
 
-  // ========================================================
-  // 4 — ANIMALS
-  // ========================================================
+  /* =======================================================
+     ANIMALS
+     ======================================================= */
 
   if(type === 4){
 
-    const animal =
+    const answer =
       pick(animals,r);
 
-    const opts =
+    const options =
       shuffle([
-        animal,
-        ...different(
-          animals,
-          animal,
-          3,
-          r
-        )
+        answer,
+        ...animals
+          .filter(x=>x!==answer)
+          .sort(()=>r()-.5)
+          .slice(0,3)
       ],r);
 
     const templates = [
-
-      `Which one is an animal?`,
-      `Which choice is a living creature?`,
-      `Find the animal.`,
-      `Can you identify the animal?`,
-      `Which option belongs to the animal world?`,
-      `Pick the real animal.`,
-      `Which answer names an animal?`,
-      `Spot the animal.`,
-      `Which one is a creature?`,
-      `Choose the animal from these choices.`,
-      `Which option is an actual animal?`
-
+      "Which one is an animal?",
+      "Which choice is a living creature?",
+      "Find the animal.",
+      "Can you identify the animal?",
+      "Which option belongs to the animal world?",
+      "Pick the real animal.",
+      "Which answer names an animal?",
+      "Spot the animal.",
+      "Which one is a creature?",
+      "Choose the animal from these choices."
     ];
 
     return {
       e:"🐾",
       t:"Animals",
       q:pick(templates,r),
-      o:opts,
-      a:opts.indexOf(animal)
+      o:options,
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 5 — FOOD
-  // ========================================================
+  /* =======================================================
+     FOOD
+     ======================================================= */
 
   if(type === 5){
 
-    const food =
+    const answer =
       pick(foods,r);
 
-    const opts =
+    const options =
       shuffle([
-        food,
-        ...different(
-          foods,
-          food,
-          3,
-          r
-        )
+        answer,
+        ...foods
+          .filter(x=>x!==answer)
+          .sort(()=>r()-.5)
+          .slice(0,3)
       ],r);
 
     const templates = [
-
-      `Which one is food?`,
-      `Which choice can you eat?`,
-      `Find the edible item.`,
-      `Which one belongs in the food category?`,
-      `Can you identify the food?`,
-      `Pick something you could eat.`,
-      `Which option is something people eat?`,
-      `Spot the food.`,
-      `Which answer names a food?`,
-      `Which choice could appear on a menu?`,
-      `Find something that can be eaten.`
-
+      "Which one is food?",
+      "Which choice can you eat?",
+      "Find the edible item.",
+      "Which one belongs in the food category?",
+      "Can you identify the food?",
+      "Pick something you could eat.",
+      "Which option is something people eat?",
+      "Spot the food.",
+      "Which answer names a food?",
+      "Which choice could appear on a menu?"
     ];
 
     return {
       e:"🍿",
       t:"Food",
       q:pick(templates,r),
-      o:opts,
-      a:opts.indexOf(food)
+      o:options,
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 6 — GEOGRAPHY
-  // ========================================================
+  /* =======================================================
+     GEOGRAPHY
+     ======================================================= */
 
   if(type === 6){
 
-    const country =
+    const answer =
       pick(countries,r);
 
-    const opts =
+    const options =
       shuffle([
-        country,
-        ...different(
-          countries,
-          country,
-          3,
-          r
-        )
+        answer,
+        ...countries
+          .filter(x=>x!==answer)
+          .sort(()=>r()-.5)
+          .slice(0,3)
       ],r);
 
     const templates = [
-
-      `Which of these is a country?`,
-      `Which choice names a country?`,
-      `Find the country.`,
-      `Which place is a nation?`,
-      `Can you identify the country?`,
-      `Which option belongs on a world map as a country?`,
-      `Pick the country from these choices.`,
-      `Which answer represents a country?`,
-      `Spot the country.`,
-      `Which one is a nation?`,
-      `Find the country in this list.`
-
+      "Which of these is a country?",
+      "Which choice names a country?",
+      "Find the country.",
+      "Which place is a nation?",
+      "Can you identify the country?",
+      "Which option belongs on a world map as a country?",
+      "Pick the country from these choices.",
+      "Which answer represents a country?",
+      "Spot the country.",
+      "Which one is a nation?"
     ];
 
     return {
       e:"🌎",
       t:"Geography",
       q:pick(templates,r),
-      o:opts,
-      a:opts.indexOf(country)
+      o:options,
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 7 — GAMING
-  // ========================================================
+  /* =======================================================
+     GAMING
+     ======================================================= */
 
   if(type === 7){
 
-    const game =
+    const answer =
       pick(games,r);
 
-    const opts =
+    const options =
       shuffle([
-        game,
-        ...different(
-          games,
-          game,
-          3,
-          r
-        )
+        answer,
+        ...games
+          .filter(x=>x!==answer)
+          .sort(()=>r()-.5)
+          .slice(0,3)
       ],r);
 
     const templates = [
-
-      `Which of these is a video game?`,
-      `Pick the video game.`,
-      `Which choice is a real game?`,
-      `Find the game.`,
-      `Which one can you play?`,
-      `Can you identify the game?`,
-      `Which option belongs in gaming?`,
-      `Spot the game title.`,
-      `Which answer names a video game?`,
-      `Choose the playable game.`,
-      `Which one is an actual game?`
-
+      "Which of these is a video game?",
+      "Pick the video game.",
+      "Which choice is a real game?",
+      "Find the game.",
+      "Which one can you play?",
+      "Can you identify the game?",
+      "Which option belongs in gaming?",
+      "Spot the game title.",
+      "Which answer names a video game?",
+      "Choose the playable game."
     ];
 
     return {
       e:"🎮",
       t:"Gaming",
       q:pick(templates,r),
-      o:opts,
-      a:opts.indexOf(game)
+      o:options,
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 8 — MEMORY
-  // ========================================================
+  /* =======================================================
+     MEMORY
+     ======================================================= */
 
   if(type === 8){
 
     const length =
-      3 + Math.floor(r()*4);
+      4 + Math.floor(r()*5);
 
     const sequence = [];
 
@@ -1333,80 +1018,65 @@ function question(id){
     }
 
     const index =
-      Math.floor(
-        r()*length
-      );
+      Math.floor(r()*length);
 
     const answer =
       sequence[index];
 
-    const opts =
+    const options =
       shuffle([
         answer,
-        ...different(
-          emojis,
-          answer,
-          3,
-          r
-        )
+        ...emojis
+          .filter(x=>x!==answer)
+          .sort(()=>r()-.5)
+          .slice(0,3)
       ],r);
-
-    const shown =
-      sequence.join(" ");
 
     return {
       e:"🧠",
       t:"Memory",
       q:
-        `Remember ${shown}. Which emoji was #${index+1}?`,
-      o:opts,
-      a:opts.indexOf(answer)
+        `Remember ${sequence.join(" ")}. ` +
+        `Which emoji was #${index+1}?`,
+      o:options,
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 9 — WORD SCRAMBLE
-  // ========================================================
+  /* =======================================================
+     WORD SCRAMBLE
+     ======================================================= */
 
   if(type === 9){
 
     const word =
       pick(words,r);
 
-    let scrambled;
+    const letters =
+      [...word];
 
-    let attempts = 0;
+    let scrambled =
+      shuffle(letters,r).join("");
 
-    do{
+    if(scrambled === word){
 
       scrambled =
-        shuffle(
-          [...word],
-          r
-        ).join("");
+        letters.reverse().join("");
 
-      attempts++;
+    }
 
-    }while(
-      scrambled === word &&
-      attempts < 10
-    );
-
-    const opts =
+    const options =
       shuffle([
         word,
-        ...different(
-          words,
-          word,
-          3,
-          r
-        )
+        ...words
+          .filter(x=>x!==word)
+          .sort(()=>r()-.5)
+          .slice(0,3)
       ],r);
 
     const templates = [
-
       `Unscramble: ${scrambled}`,
       `What word does ${scrambled} make?`,
       `Can you decode ${scrambled}?`,
@@ -1415,80 +1085,76 @@ function question(id){
       `Which word matches ${scrambled}?`,
       `What word is hidden in ${scrambled}?`,
       `Figure out ${scrambled}.`
-
     ];
 
     return {
       e:"🔤",
       t:"Word Puzzle",
       q:pick(templates,r),
-      o:opts,
-      a:opts.indexOf(word)
+      o:options,
+      a:options.indexOf(word)
     };
 
   }
 
 
-  // ========================================================
-  // 10 — RANDOM NUMBER
-  // ========================================================
+  /* =======================================================
+     RANDOM NUMBER
+     ======================================================= */
 
   if(type === 10){
 
     const max =
-      10 + Math.floor(r()*991);
+      10 + Math.floor(r()*99990);
 
     const answer =
       1 + Math.floor(r()*max);
 
-    const opts =
-      new Set([
-        answer,
-        Math.max(1,answer-1),
-        Math.min(max,answer+1),
-        Math.max(1,answer-10)
-      ]);
+    const values = new Set();
 
-    while(opts.size < 4){
+    values.add(answer);
 
-      opts.add(
-        1 + Math.floor(r()*max)
+    while(values.size < 4){
+
+      values.add(
+        1 +
+        Math.floor(r()*max)
       );
 
     }
 
     const options =
       shuffle(
-        [...opts].map(String),
+        [...values].map(String),
         r
       );
 
     return {
       e:"🎲",
-      t:"Prediction",
+      t:"Random Number",
       q:
         `Guess the secret number from 1–${max}.`,
       o:options,
-      a:
-        options.indexOf(
-          String(answer)
-        )
+      a:options.indexOf(String(answer))
     };
 
   }
 
 
-  // ========================================================
-  // 11 — NUMBER PATTERN
-  // ========================================================
+  /* =======================================================
+     NUMBER PATTERN
+     ======================================================= */
 
   if(type === 11){
 
     const start =
-      2 + Math.floor(r()*50);
+      2 + Math.floor(r()*500);
 
     const step =
-      1 + Math.floor(r()*20);
+      1 + Math.floor(r()*100);
+
+    const answer =
+      start + step*4;
 
     const sequence = [
       start,
@@ -1497,15 +1163,12 @@ function question(id){
       start+step*3
     ];
 
-    const answer =
-      start+step*4;
-
-    const opts =
+    const options =
       shuffle([
         answer,
         answer+step,
         answer-step,
-        answer+10
+        answer+step*2
       ],r);
 
     return {
@@ -1513,67 +1176,42 @@ function question(id){
       t:"Number Pattern",
       q:
         `${sequence.join(", ")}, ?`,
-      o:opts.map(String),
-      a:opts.indexOf(answer)
+      o:options.map(String),
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 12 — ODD ONE OUT
-  // ========================================================
+  /* =======================================================
+     ODD ONE OUT
+     ======================================================= */
 
   if(type === 12){
 
-    const animal =
+    const a =
       pick(animals,r);
 
-    const animal2 =
+    const b =
       pick(
-        different(
-          animals,
-          animal,
-          1,
-          r
-        ),
+        animals.filter(x=>x!==a),
         r
       );
+
+    const c =
+      pick(animals.filter(
+        x=>x!==a && x!==b
+      ),r);
 
     const food =
       pick(foods,r);
 
-    const food2 =
-      pick(
-        different(
-          foods,
-          food,
-          1,
-          r
-        ),
-        r
-      );
-
-    const odd =
-      pick(
-        [animal,animal2],
-        r
-      );
-
-    const opts =
+    const options =
       shuffle([
-        odd,
-        food,
-        food2,
-        pick(
-          different(
-            foods,
-            food,
-            1,
-            r
-          ),
-          r
-        )
+        a,
+        b,
+        c,
+        food
       ],r);
 
     return {
@@ -1581,58 +1219,53 @@ function question(id){
       t:"Odd One Out",
       q:
         "Which choice does NOT belong with the others?",
-      o:opts,
-      a:opts.indexOf(odd)
+      o:options,
+      a:options.indexOf(food)
     };
 
   }
 
 
-  // ========================================================
-  // 13 — SHAPES
-  // ========================================================
+  /* =======================================================
+     SHAPES
+     ======================================================= */
 
   if(type === 13){
 
-    const shape =
+    const answer =
       pick(shapes,r);
 
-    const opts =
+    const options =
       shuffle([
-        shape,
-        ...different(
-          shapes,
-          shape,
-          3,
-          r
-        )
+        answer,
+        ...shapes
+          .filter(x=>x!==answer)
+          .sort(()=>r()-.5)
+          .slice(0,3)
       ],r);
-
-    const templates = [
-
-      "Which of these is a shape?",
-      "Pick the geometric shape.",
-      "Which option is a shape?",
-      "Find the shape.",
-      "Which choice names a shape?",
-      "Spot the shape."
-
-    ];
 
     return {
       e:"🔷",
       t:"Shapes",
-      q:pick(templates,r),
-      o:opts,
-      a:opts.indexOf(shape)
+      q:
+        pick([
+          "Which of these is a shape?",
+          "Pick the geometric shape.",
+          "Which option is a shape?",
+          "Find the shape.",
+          "Which choice names a shape?",
+          "Spot the shape."
+        ],r),
+      o:options,
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 14 — LETTER COUNT
-  // ========================================================
+  /* =======================================================
+     LETTER COUNT
+     ======================================================= */
 
   if(type === 14){
 
@@ -1642,7 +1275,7 @@ function question(id){
     const answer =
       word.length;
 
-    const opts =
+    const options =
       shuffle([
         answer,
         answer+1,
@@ -1655,37 +1288,37 @@ function question(id){
       t:"Letter Count",
       q:
         `How many letters are in "${word}"?`,
-      o:opts.map(String),
-      a:opts.indexOf(answer)
+      o:options.map(String),
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 15 — ESTIMATION
-  // ========================================================
+  /* =======================================================
+     ESTIMATION
+     ======================================================= */
 
   if(type === 15){
 
     const a =
-      10 + Math.floor(r()*490);
+      10 + Math.floor(r()*990);
 
     const b =
-      10 + Math.floor(r()*490);
+      10 + Math.floor(r()*990);
 
     const actual =
       a+b;
 
-    const rounded =
+    const answer =
       Math.round(actual/10)*10;
 
-    const opts =
+    const options =
       shuffle([
-        rounded,
-        rounded+10,
-        Math.max(10,rounded-10),
-        rounded+20
+        answer,
+        answer+10,
+        Math.max(10,answer-10),
+        answer+20
       ],r);
 
     return {
@@ -1693,38 +1326,36 @@ function question(id){
       t:"Estimation",
       q:
         `About how much is ${a} + ${b}?`,
-      o:opts.map(String),
-      a:opts.indexOf(rounded)
+      o:options.map(String),
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 16 — WHICH COMES NEXT
-  // ========================================================
+  /* =======================================================
+     WHICH COMES NEXT
+     ======================================================= */
 
   if(type === 16){
 
-    const base =
-      1 + Math.floor(r()*20);
+    const start =
+      1 + Math.floor(r()*100);
 
     const step =
-      1 + Math.floor(r()*12);
-
-    const sequence = [
-
-      base,
-      base+step,
-      base+step*2,
-      base+step*3
-
-    ];
+      1 + Math.floor(r()*50);
 
     const answer =
-      base+step*4;
+      start + step*4;
 
-    const opts =
+    const sequence = [
+      start,
+      start+step,
+      start+step*2,
+      start+step*3
+    ];
+
+    const options =
       shuffle([
         answer,
         answer+step,
@@ -1737,21 +1368,20 @@ function question(id){
       t:"What's Next?",
       q:
         `${sequence.join(" → ")} → ?`,
-      o:opts.map(String),
-      a:opts.indexOf(answer)
+      o:options.map(String),
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 17 — EMOJI MEANING
-  // ========================================================
+  /* =======================================================
+     EMOJI MEANING
+     ======================================================= */
 
   if(type === 17){
 
     const meanings = [
-
       ["🔥","fire"],
       ["⭐","star"],
       ["🍎","apple"],
@@ -1768,22 +1398,25 @@ function question(id){
       ["🦖","dinosaur"],
       ["🌈","rainbow"],
       ["☀️","sun"],
-      ["🌙","moon"]
-
+      ["🌙","moon"],
+      ["🐼","panda"],
+      ["🍉","watermelon"],
+      ["🎸","guitar"]
     ];
 
     const chosen =
       pick(meanings,r);
 
-    const opts =
+    const meaningsOnly =
+      meanings.map(x=>x[1]);
+
+    const options =
       shuffle([
         chosen[1],
-        ...different(
-          meanings.map(x=>x[1]),
-          chosen[1],
-          3,
-          r
-        )
+        ...meaningsOnly
+          .filter(x=>x!==chosen[1])
+          .sort(()=>r()-.5)
+          .slice(0,3)
       ],r);
 
     return {
@@ -1791,149 +1424,123 @@ function question(id){
       t:"Emoji",
       q:
         `What does ${chosen[0]} represent?`,
-      o:opts,
-      a:opts.indexOf(chosen[1])
+      o:options,
+      a:options.indexOf(chosen[1])
     };
 
   }
 
 
-  // ========================================================
-  // 18 — COLOR
-  // ========================================================
+  /* =======================================================
+     COLORS
+     ======================================================= */
 
   if(type === 18){
 
-    const color =
+    const answer =
       pick(colors,r);
 
-    const colorPairs = [
-
-      ["red","green"],
-      ["blue","orange"],
-      ["yellow","purple"],
-      ["black","white"],
-      ["pink","green"],
-      ["red","blue"],
-      ["yellow","blue"],
-      ["orange","purple"]
-
-    ];
-
-    const pair =
-      pick(colorPairs,r);
-
-    const answer =
-      pick(pair,r);
-
-    const opts =
+    const options =
       shuffle([
         answer,
-        ...different(
-          colors,
-          answer,
-          3,
-          r
-        )
+        ...colors
+          .filter(x=>x!==answer)
+          .sort(()=>r()-.5)
+          .slice(0,3)
       ],r);
 
     return {
       e:"🎨",
       t:"Colors",
       q:
-        `Which option is a color?`,
-      o:opts,
-      a:opts.indexOf(answer)
+        "Which option is a color?",
+      o:options,
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 19 — DIRECTIONS
-  // ========================================================
+  /* =======================================================
+     DIRECTIONS
+     ======================================================= */
 
   if(type === 19){
 
     const answer =
       pick(directions,r);
 
-    const opts =
-      shuffle([
-        answer,
-        ...different(
-          directions,
-          answer,
-          3,
-          r
-        )
-      ],r);
+    const options =
+      shuffle(
+        directions,
+        r
+      );
 
     return {
       e:"🧭",
       t:"Directions",
       q:
-        `Which direction was randomly selected?`,
-      o:opts,
-      a:opts.indexOf(answer)
+        `Which direction is "${answer}"?`,
+      o:options,
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 20 — SEASONS
-  // ========================================================
+  /* =======================================================
+     SEASONS
+     ======================================================= */
 
   if(type === 20){
 
     const answer =
       pick(seasons,r);
 
-    const opts =
-      shuffle([
-        answer,
-        ...different(
-          seasons,
-          answer,
-          3,
-          r
-        )
-      ],r);
+    const options =
+      shuffle(
+        seasons,
+        r
+      );
 
     return {
       e:"🌤️",
       t:"Seasons",
       q:
         "Which of these is a season?",
-      o:opts,
-      a:opts.indexOf(answer)
+      o:options,
+      a:options.indexOf(answer)
     };
 
   }
 
 
-  // ========================================================
-  // 21 — BIGGER NUMBER
-  // ========================================================
+  /* =======================================================
+     BIGGER NUMBER
+     ======================================================= */
 
   if(type === 21){
 
-    const a =
-      1 + Math.floor(r()*10000);
+    let a =
+      1 + Math.floor(r()*100000);
 
-    const b =
-      1 + Math.floor(r()*10000);
+    let b =
+      1 + Math.floor(r()*100000);
+
+    while(a === b){
+      b =
+        1 + Math.floor(r()*100000);
+    }
 
     const answer =
-      a > b ? String(a) : String(b);
+      Math.max(a,b);
 
-    const opts =
+    const options =
       shuffle([
         String(a),
         String(b),
-        String(Math.max(a,b)+1),
-        String(Math.max(1,Math.min(a,b)-1))
+        String(answer+1),
+        String(Math.max(1,answer-1))
       ],r);
 
     return {
@@ -1941,34 +1548,39 @@ function question(id){
       t:"Compare",
       q:
         `Which number is larger: ${a} or ${b}?`,
-      o:opts,
-      a:opts.indexOf(answer)
+      o:options,
+      a:options.indexOf(String(answer))
     };
 
   }
 
 
-  // ========================================================
-  // 22 — SMALLER NUMBER
-  // ========================================================
+  /* =======================================================
+     SMALLER NUMBER
+     ======================================================= */
 
   if(type === 22){
 
-    const a =
-      1 + Math.floor(r()*10000);
+    let a =
+      1 + Math.floor(r()*100000);
 
-    const b =
-      1 + Math.floor(r()*10000);
+    let b =
+      1 + Math.floor(r()*100000);
+
+    while(a === b){
+      b =
+        1 + Math.floor(r()*100000);
+    }
 
     const answer =
       Math.min(a,b);
 
-    const opts =
+    const options =
       shuffle([
         String(a),
         String(b),
-        String(Math.max(a,b)+1),
-        String(Math.max(1,answer-1))
+        String(answer-1 > 0 ? answer-1 : answer+2),
+        String(Math.max(a,b)+1)
       ],r);
 
     return {
@@ -1976,81 +1588,61 @@ function question(id){
       t:"Compare",
       q:
         `Which number is smaller: ${a} or ${b}?`,
-      o:opts,
-      a:opts.indexOf(String(answer))
+      o:options,
+      a:options.indexOf(String(answer))
     };
 
   }
 
 
-  // ========================================================
-  // 23 — QUICK CHOICE
-  // ========================================================
+  /* =======================================================
+     QUICK CHOICE
+     ======================================================= */
 
   const choices = [
-
-    "sun",
-    "moon",
-    "star",
-    "cloud",
-    "tree",
-    "river",
-    "mountain",
-    "ocean",
-    "robot",
-    "castle",
-    "rocket",
-    "island",
-    "bridge",
-    "train",
-    "airplane",
-    "computer",
-    "camera",
-    "guitar",
-    "book",
-    "pencil"
-
+    "sun","moon","star","cloud","tree","river",
+    "mountain","ocean","robot","castle","rocket",
+    "island","bridge","train","airplane","computer",
+    "camera","guitar","book","pencil","planet",
+    "volcano","rainbow","forest","desert","spaceship",
+    "dinosaur","castle","trophy","keyboard"
   ];
 
   const answer =
     pick(choices,r);
 
-  const opts =
+  const options =
     shuffle([
       answer,
-      ...different(
-        choices,
-        answer,
-        3,
-        r
-      )
+      ...choices
+        .filter(x=>x!==answer)
+        .sort(()=>r()-.5)
+        .slice(0,3)
     ],r);
 
   const templates = [
-
     "Pick the secret choice.",
     "Which one did the app select?",
     "Can you guess the selected item?",
     "Which choice is hiding as the answer?",
     "Find the app's choice.",
     "What did the randomizer pick?"
-
   ];
 
   return {
     e:"🎯",
     t:"Quick Choice",
     q:pick(templates,r),
-    o:opts,
-    a:opts.indexOf(answer)
+    o:options,
+    a:options.indexOf(answer)
   };
 
 }
 
 
-// ============================================================
-// CREATE CARD
-// ============================================================
+/* =========================================================
+   CREATE CARD
+   ========================================================= */
 
 function makeCard(id){
 
@@ -2058,10 +1650,14 @@ function makeCard(id){
     question(id);
 
 
-  // Build an exact fingerprint.
+  /*
+    A complete fingerprint includes:
+    type + question + every answer.
+
+    This means an accidental duplicate gets rejected.
+  */
 
   const fingerprint =
-
     d.t +
     "|" +
     d.q +
@@ -2069,12 +1665,8 @@ function makeCard(id){
     d.o.join("|");
 
 
-  // Reject exact duplicates.
-
   if(
-    seenChallenges.has(
-      fingerprint
-    )
+    seenChallenges.has(fingerprint)
   ){
 
     return false;
@@ -2088,18 +1680,14 @@ function makeCard(id){
 
 
   const card =
-    document.createElement(
-      "section"
-    );
+    document.createElement("section");
 
   card.className =
     "card";
 
 
   const inner =
-    document.createElement(
-      "div"
-    );
+    document.createElement("div");
 
   inner.className =
     "inner";
@@ -2130,34 +1718,28 @@ function makeCard(id){
   `;
 
 
-  const opts =
-    inner.querySelector(
-      ".options"
-    );
-
+  const optionsContainer =
+    inner.querySelector(".options");
 
   const result =
-    inner.querySelector(
-      ".result"
-    );
+    inner.querySelector(".result");
 
 
-  let answered = false;
+  let answered =
+    false;
 
 
   d.o.forEach(
-    (text,index) => {
+    (optionText,index) => {
 
       const button =
-        document.createElement(
-          "button"
-        );
+        document.createElement("button");
 
       button.className =
         "option";
 
       button.textContent =
-        text;
+        optionText;
 
 
       button.onclick = () => {
@@ -2169,21 +1751,23 @@ function makeCard(id){
 
         answered = true;
 
-        answeredCards++;
+
+        /*
+          Disable every option immediately so
+          the user cannot answer twice.
+        */
+
+        [...optionsContainer.children]
+          .forEach(
+            b => {
+              b.disabled = true;
+            }
+          );
 
 
-        [...opts.children].forEach(
-          b => {
+        /* LOOK AROUND */
 
-            b.disabled = true;
-
-          }
-        );
-
-
-        if(
-          d.a === null
-        ){
+        if(d.a === null){
 
           button.classList.add(
             "selected"
@@ -2197,9 +1781,9 @@ function makeCard(id){
         }
 
 
-        else if(
-          index === d.a
-        ){
+        /* CORRECT */
+
+        else if(index === d.a){
 
           button.classList.add(
             "correct"
@@ -2213,17 +1797,25 @@ function makeCard(id){
         }
 
 
+        /* WRONG */
+
         else{
 
           button.classList.add(
             "wrong"
           );
 
-          opts.children[
-            d.a
-          ].classList.add(
-            "correct"
-          );
+          if(
+            optionsContainer.children[d.a]
+          ){
+
+            optionsContainer
+              .children[d.a]
+              .classList.add(
+                "correct"
+              );
+
+          }
 
           result.textContent =
             "❌ Not quite — keep going!";
@@ -2239,7 +1831,7 @@ function makeCard(id){
       };
 
 
-      opts.appendChild(
+      optionsContainer.appendChild(
         button
       );
 
@@ -2262,25 +1854,33 @@ function makeCard(id){
 }
 
 
-// ============================================================
-// LOAD BATCH
-// ============================================================
+/* =========================================================
+   LOAD BATCH
+   ========================================================= */
 
 function addBatch(){
+
+  if(generated >= TOTAL){
+    return;
+  }
+
 
   let added = 0;
 
 
   while(
-
     added < BATCH_SIZE &&
-
     generated < TOTAL
-
   ){
 
-    const id =
+    /*
+      Circular ID system.
 
+      This means starting at any random ID still allows
+      the app to eventually cover all 1,000,000 IDs.
+    */
+
+    const id =
       (
         startId +
         generated
@@ -2295,9 +1895,7 @@ function addBatch(){
 
 
     if(success){
-
       added++;
-
     }
 
   }
@@ -2308,9 +1906,9 @@ function addBatch(){
 }
 
 
-// ============================================================
-// PROGRESS
-// ============================================================
+/* =========================================================
+   PROGRESS
+   ========================================================= */
 
 function updateProgress(){
 
@@ -2321,30 +1919,35 @@ function updateProgress(){
     );
 
 
+  const rail =
+    document.getElementById(
+      "progressRail"
+    );
+
+
   const railHeight =
-    document
-      .getElementById("progressRail")
-      .clientHeight;
+    rail.clientHeight;
 
 
   const thumbHeight =
     progressThumb.offsetHeight;
 
 
-  progressThumb.style.top =
+  const usableHeight =
+    Math.max(
+      0,
+      railHeight-thumbHeight
+    );
 
+
+  progressThumb.style.top =
     (
       percent *
-      Math.max(
-        0,
-        railHeight -
-        thumbHeight
-      )
+      usableHeight
     ) + "px";
 
 
   progressText.textContent =
-
     generated.toLocaleString() +
     " / " +
     TOTAL.toLocaleString();
@@ -2352,42 +1955,47 @@ function updateProgress(){
 }
 
 
-// ============================================================
-// CLEANUP OLD CARDS
-// ============================================================
+/* =========================================================
+   CLEANUP
+   ========================================================= */
 
 function cleanupCards(){
 
-  const cards =
-    feed.children;
-
-
   while(
-
-    cards.length >
-    MAX_DOM_CARDS &&
-
-    cards[0]
-      .getBoundingClientRect()
-      .bottom < -2000
-
+    feed.children.length >
+    MAX_DOM_CARDS
   ){
 
-    const oldCard =
-      cards[0];
+    const first =
+      feed.children[0];
 
 
-    // Save its height before removing it.
+    /*
+      Only remove cards that are safely behind
+      the user's current position.
+    */
+
+    if(
+      first.getBoundingClientRect().bottom
+      >= -1500
+    ){
+
+      break;
+
+    }
+
 
     const height =
-      oldCard.offsetHeight;
+      first.offsetHeight;
 
 
-    oldCard.remove();
+    first.remove();
 
 
-    // Compensate for removing content
-    // above the user's current position.
+    /*
+      Compensate for removing the card so the
+      user's scroll position does not jump.
+    */
 
     feed.scrollTop -=
       height;
@@ -2397,32 +2005,25 @@ function cleanupCards(){
 }
 
 
-// ============================================================
-// SCROLL HANDLER
-// ============================================================
+/* =========================================================
+   SCROLL
+   ========================================================= */
 
 feed.addEventListener(
-
   "scroll",
 
   () => {
 
-
     const nearBottom =
-
       feed.scrollTop +
       feed.clientHeight >=
-
       feed.scrollHeight -
       feed.clientHeight * 5;
 
 
     if(
-
       nearBottom &&
-
       generated < TOTAL
-
     ){
 
       addBatch();
@@ -2431,7 +2032,6 @@ feed.addEventListener(
 
 
     cleanupCards();
-
 
     updateProgress();
 
@@ -2444,69 +2044,67 @@ feed.addEventListener(
 );
 
 
-// ============================================================
-// INITIAL LOAD
-// ============================================================
+/* =========================================================
+   INITIAL LOAD
+   ========================================================= */
 
 addBatch();
 
 
-// ============================================================
-// RESIZE
-// ============================================================
+/* =========================================================
+   KEEP THE FEED FULL
+   ========================================================= */
+
+function ensureEnoughCards(){
+
+  if(
+    generated < TOTAL &&
+    feed.scrollHeight <
+    feed.clientHeight * 3
+  ){
+
+    addBatch();
+
+  }
+
+}
+
+
+setInterval(
+  ensureEnoughCards,
+  1000
+);
+
+
+/* =========================================================
+   RESIZE
+   ========================================================= */
 
 window.addEventListener(
-
   "resize",
 
   () => {
 
-    if(
-
-      feed.scrollHeight <=
-      feed.clientHeight * 3 &&
-
-      generated < TOTAL
-
-    ){
-
-      addBatch();
-
-    }
-
+    ensureEnoughCards();
 
     updateProgress();
 
   }
-
 );
 
 
-// ============================================================
-// EXTRA SAFETY
-// ============================================================
+/* =========================================================
+   FINISHED
+   ========================================================= */
 
-setInterval(
+window.addEventListener(
+  "load",
 
   () => {
 
-    if(
+    updateProgress();
 
-      generated < TOTAL &&
-
-      feed.scrollHeight <
-      feed.clientHeight * 2
-
-    ){
-
-      addBatch();
-
-    }
-
-  },
-
-  1500
-
+  }
 );
 
 </script>
