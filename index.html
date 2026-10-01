@@ -675,15 +675,14 @@ addBatch();
 
 
 // ==========================================
-// CONTINUOUS SCROLLING
+// CONTINUOUS SCROLLING + CARD CLEANUP
 // ==========================================
 
 feed.addEventListener(
   "scroll",
   () => {
 
-    // When the user gets within 5 screens
-    // of the bottom, load another 50.
+    // Load more when the user gets near the bottom
     const nearBottom =
       feed.scrollTop + feed.clientHeight >=
       feed.scrollHeight - (feed.clientHeight * 5);
@@ -692,11 +691,21 @@ feed.addEventListener(
       addBatch();
     }
 
+
+    // Quietly remove cards far behind the user.
+    // Keep the most recent 100 cards in the DOM.
+    const cards = feed.children;
+
+    while(
+      cards.length > 100 &&
+      cards[0].getBoundingClientRect().bottom < -2000
+    ){
+      cards[0].remove();
+    }
+
   },
   {passive:true}
 );
-
-
 // ==========================================
 // EXTRA SAFETY NET
 // ==========================================
