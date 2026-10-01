@@ -446,28 +446,45 @@ function question(id){
   }
 
 
-  // Geography
-  if(type === 7){
+ // Geography
+if(type === 7){
 
-    const country = pick(countries, r);
+  const country = pick(countries, r);
 
-    const opts = shuffle([
-      country,
-      ...shuffle(
-        countries.filter(x => x !== country),
-        r
-      ).slice(0,3)
-    ], r);
+  const opts = shuffle([
+    country,
+    ...shuffle(
+      countries.filter(x => x !== country),
+      r
+    ).slice(0,3)
+  ], r);
 
-    return {
-      e:"🌎",
-      t:"Geography",
-      q:"Which option is a country?",
-      o:opts,
-      a:opts.indexOf(country)
-    };
-  }
+  const questions = [
+    "Which of these is a country?",
+    "Pick the country.",
+    "Which choice names a country?",
+    "Find the country in this list.",
+    "Which answer is a real country?",
+    "Choose the country.",
+    "Which one is a country?",
+    "Spot the country.",
+    "Which option belongs on a world map?",
+    "Which place is a country?",
+    "Can you identify the country?",
+    "Which of these places is a country?",
+    "Select the country.",
+    "Which answer represents a country?",
+    "Find the country."
+  ];
 
+  return {
+    e:"🌎",
+    t:"Geography",
+    q:pick(questions, r),
+    o:opts,
+    a:opts.indexOf(country)
+  };
+} 
 
   // Gaming
   if(type === 8){
