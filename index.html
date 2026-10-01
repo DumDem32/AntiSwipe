@@ -396,29 +396,47 @@ function question(id){
   }
 
 
-  // Animals
-  if(type === 5){
+ // Animals
+if(type === 5){
 
-    const animal = pick(animals, r);
+  const animal = pick(animals, r);
 
-    const others = shuffle(
-      animals.filter(x => x !== animal),
-      r
-    ).slice(0,3);
+  const others = shuffle(
+    animals.filter(x => x !== animal),
+    r
+  ).slice(0,3);
 
-    const opts = shuffle(
-      [animal, ...others],
-      r
-    );
+  const opts = shuffle(
+    [animal, ...others],
+    r
+  );
 
-    return {
-      e:"🐾",
-      t:"Animals",
-      q:"Which of these is an animal?",
-      o:opts,
-      a:opts.indexOf(animal)
-    };
-  }
+  const questions = [
+    "Which of these is an animal?",
+    "Pick the animal.",
+    "Which choice is an animal?",
+    "Find the animal in this list.",
+    "Which one is a real animal?",
+    "Choose the animal.",
+    "Spot the animal.",
+    "Which of these creatures is an animal?",
+    "Can you identify the animal?",
+    "Which answer is an animal?",
+    "Select the animal.",
+    "Which creature belongs in the animal category?",
+    "Find the animal.",
+    "Which option is a living animal?",
+    "Which one is an actual animal?"
+  ];
+
+  return {
+    e:"🐾",
+    t:"Animals",
+    q:pick(questions, r),
+    o:opts,
+    a:opts.indexOf(animal)
+  };
+}
 
 
   // Food
