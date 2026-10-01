@@ -274,30 +274,42 @@ function question(id){
   const type = id % 12;
 
 
-  // Math
-  if(type === 0){
+ // Math
+if(type === 0){
 
-    const n = 2 + Math.floor(r() * 48);
-    const mult = 2 + Math.floor(r() * 9);
+  const n = 2 + Math.floor(r() * 48);
+  const mult = 2 + Math.floor(r() * 9);
 
-    const ans = n * mult;
+  const ans = n * mult;
 
-    const opts = shuffle([
-      ans,
-      ans + mult,
-      ans - mult,
-      ans + 2 * mult
-    ], r);
+  const opts = shuffle([
+    ans,
+    ans + mult,
+    ans - mult,
+    ans + 2 * mult
+  ], r);
 
-    return {
-      e:"🔢",
-      t:"Fast Math",
-      q:`What is ${n} × ${mult}?`,
-      o:opts.map(String),
-      a:opts.indexOf(ans)
-    };
-  }
+  const questions = [
+    `What is ${n} × ${mult}?`,
+    `Solve: ${n} × ${mult}`,
+    `Calculate ${n} times ${mult}.`,
+    `Can you solve ${n} × ${mult}?`,
+    `What's the answer to ${n} × ${mult}?`,
+    `Quick math: ${n} × ${mult} = ?`,
+    `Work this out: ${n} × ${mult}`,
+    `Figure out ${n} × ${mult}.`,
+    `What does ${n} multiplied by ${mult} equal?`,
+    `Solve this multiplication problem: ${n} × ${mult}`
+  ];
 
+  return {
+    e:"🔢",
+    t:"Fast Math",
+    q:pick(questions, r),
+    o:opts.map(String),
+    a:opts.indexOf(ans)
+  };
+}
 
   // Addition
   if(type === 1){
