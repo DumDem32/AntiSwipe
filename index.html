@@ -348,30 +348,42 @@ if(type === 1){
   };
 }
 
-  // Subtraction
-  if(type === 2){
+// Subtraction
+if(type === 2){
 
-    const n = 20 + Math.floor(r() * 80);
-    const sub = 2 + Math.floor(r() * 18);
+  const n = 20 + Math.floor(r() * 80);
+  const sub = 2 + Math.floor(r() * 18);
 
-    const ans = n - sub;
+  const ans = n - sub;
 
-    const opts = shuffle([
-      ans,
-      ans + sub,
-      ans - 1,
-      ans + 10
-    ], r);
+  const opts = shuffle([
+    ans,
+    ans + sub,
+    ans - 1,
+    ans + 10
+  ], r);
 
-    return {
-      e:"➖",
-      t:"Number Puzzle",
-      q:`What is ${n} − ${sub}?`,
-      o:opts.map(String),
-      a:opts.indexOf(ans)
-    };
-  }
+  const questions = [
+    `What is ${n} − ${sub}?`,
+    `Solve: ${n} − ${sub}`,
+    `Calculate ${n} minus ${sub}.`,
+    `Can you solve ${n} − ${sub}?`,
+    `What's the answer to ${n} − ${sub}?`,
+    `Quick math: ${n} − ${sub} = ?`,
+    `Work this out: ${n} − ${sub}`,
+    `Figure out ${n} − ${sub}.`,
+    `What does ${n} minus ${sub} equal?`,
+    `Solve this subtraction problem: ${n} − ${sub}`
+  ];
 
+  return {
+    e:"➖",
+    t:"Number Puzzle",
+    q:pick(questions, r),
+    o:opts.map(String),
+    a:opts.indexOf(ans)
+  };
+}
 
   // Multiplication
   if(type === 3){
