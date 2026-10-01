@@ -312,29 +312,41 @@ if(type === 0){
 }
 
   // Addition
-  if(type === 1){
+if(type === 1){
 
-    const n = 5 + Math.floor(r() * 95);
-    const add = 5 + Math.floor(r() * 95);
+  const n = 5 + Math.floor(r() * 95);
+  const add = 5 + Math.floor(r() * 95);
 
-    const ans = n + add;
+  const ans = n + add;
 
-    const opts = shuffle([
-      ans,
-      ans + 1,
-      ans - 1,
-      ans + 10
-    ], r);
+  const opts = shuffle([
+    ans,
+    ans + 1,
+    ans - 1,
+    ans + 10
+  ], r);
 
-    return {
-      e:"➕",
-      t:"Number Puzzle",
-      q:`What is ${n} + ${add}?`,
-      o:opts.map(String),
-      a:opts.indexOf(ans)
-    };
-  }
+  const questions = [
+    `What is ${n} + ${add}?`,
+    `Solve: ${n} + ${add}`,
+    `Calculate ${n} plus ${add}.`,
+    `Can you solve ${n} + ${add}?`,
+    `What's the answer to ${n} + ${add}?`,
+    `Quick math: ${n} + ${add} = ?`,
+    `Work this out: ${n} + ${add}`,
+    `Figure out ${n} + ${add}.`,
+    `What does ${n} plus ${add} equal?`,
+    `Solve this addition problem: ${n} + ${add}`
+  ];
 
+  return {
+    e:"➕",
+    t:"Number Puzzle",
+    q:pick(questions, r),
+    o:opts.map(String),
+    a:opts.indexOf(ans)
+  };
+}
 
   // Subtraction
   if(type === 2){
