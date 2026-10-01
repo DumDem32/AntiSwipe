@@ -374,27 +374,44 @@ function question(id){
   }
 
 
-  // Look around
-  if(type === 4){
+ // Look around
+if(type === 4){
 
-    const color = pick(colors, r);
+  const color = pick(colors, r);
 
-    const opts = shuffle([
-      color,
-      "something else",
-      "nothing",
-      "two colors"
-    ], r);
+  const opts = shuffle([
+    color,
+    "something else",
+    "nothing",
+    "two colors"
+  ], r);
 
-    return {
-      e:"👀",
-      t:"Look Around",
-      q:`Look around. Can you find something ${color}?`,
-      o:opts,
-      a:null
-    };
-  }
+  const questions = [
+    `Look around you. Can you find something ${color}?`,
+    `Find something ${color} around you.`,
+    `Can you spot something ${color}?`,
+    `Look around. Is there anything ${color} nearby?`,
+    `Find a ${color} object around you.`,
+    `Take a look around. Can you see something ${color}?`,
+    `Spot something ${color} near you.`,
+    `Look around your surroundings. Can you find ${color}?`,
+    `Can you see anything ${color} right now?`,
+    `Find something that is ${color}.`,
+    `Look around you for something ${color}.`,
+    `Is there a ${color} object you can see?`,
+    `Scan the area around you. Can you spot ${color}?`,
+    `Look nearby. Can you find something ${color}?`,
+    `Find a ${color} thing in your surroundings.`
+  ];
 
+  return {
+    e:"👀",
+    t:"Look Around",
+    q:pick(questions, r),
+    o:opts,
+    a:null
+  };
+}
 
  // Animals
 if(type === 5){
