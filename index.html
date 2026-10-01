@@ -122,7 +122,7 @@ html, body {
 #progressText {
   position: fixed;
   right: 18px;
-  top: calc(15% + 78%);
+  top: calc(15% + 75%);
   transform: translateY(-50%);
   color: rgba(255,255,255,.55);
   font-size: 11px;
@@ -150,9 +150,11 @@ html, body {
 <div id="progressRail">
   <div id="progressThumb"></div>
 </div>
+
 <div id="progressText">0 / 1,000,000</div>
 
 <script>
+
 /* =========================================================
    SETTINGS
 ========================================================= */
@@ -165,32 +167,91 @@ const feed = document.getElementById("feed");
 const progressThumb = document.getElementById("progressThumb");
 const progressText = document.getElementById("progressText");
 
+
 /* =========================================================
    DATA
 ========================================================= */
 
 const colors = [
-  "red", "blue", "green", "yellow", "orange",
-  "purple", "pink", "brown", "black", "white"
+  "red",
+  "blue",
+  "green",
+  "yellow",
+  "orange",
+  "purple",
+  "pink",
+  "brown",
+  "black",
+  "white"
 ];
 
 const animals = [
-  "dog", "cat", "lion", "tiger", "elephant",
-  "giraffe", "zebra", "penguin", "dolphin", "shark",
-  "horse", "rabbit", "monkey", "panda", "bear"
+  "dog",
+  "cat",
+  "lion",
+  "tiger",
+  "elephant",
+  "giraffe",
+  "zebra",
+  "penguin",
+  "dolphin",
+  "shark",
+  "horse",
+  "rabbit",
+  "monkey",
+  "panda",
+  "bear",
+  "wolf",
+  "fox",
+  "frog",
+  "turtle",
+  "kangaroo"
 ];
 
 const foods = [
-  "pizza", "apple", "banana", "hamburger", "taco",
-  "sandwich", "orange", "strawberry", "watermelon",
-  "carrot", "broccoli", "cookie", "popcorn", "cheese"
+  "pizza",
+  "apple",
+  "banana",
+  "hamburger",
+  "taco",
+  "sandwich",
+  "orange",
+  "strawberry",
+  "watermelon",
+  "carrot",
+  "broccoli",
+  "cookie",
+  "popcorn",
+  "cheese",
+  "pasta",
+  "rice",
+  "cake",
+  "ice cream",
+  "donut",
+  "pretzel"
 ];
 
 const countries = [
-  "United States", "Canada", "Mexico", "Brazil",
-  "France", "Germany", "Italy", "Spain",
-  "Japan", "China", "India", "Australia",
-  "Egypt", "Greece", "United Kingdom"
+  "United States",
+  "Canada",
+  "Mexico",
+  "Brazil",
+  "France",
+  "Germany",
+  "Italy",
+  "Spain",
+  "Japan",
+  "China",
+  "India",
+  "Australia",
+  "Egypt",
+  "Greece",
+  "United Kingdom",
+  "Argentina",
+  "Portugal",
+  "Norway",
+  "Sweden",
+  "South Korea"
 ];
 
 const capitals = {
@@ -208,16 +269,53 @@ const capitals = {
   "Australia": "Canberra",
   "Egypt": "Cairo",
   "Greece": "Athens",
-  "United Kingdom": "London"
+  "United Kingdom": "London",
+  "Argentina": "Buenos Aires",
+  "Portugal": "Lisbon",
+  "Norway": "Oslo",
+  "Sweden": "Stockholm",
+  "South Korea": "Seoul"
 };
 
 const shapes = [
-  "circle", "square", "triangle", "rectangle",
-  "pentagon", "hexagon", "octagon", "star"
+  "circle",
+  "square",
+  "triangle",
+  "rectangle",
+  "pentagon",
+  "hexagon",
+  "octagon",
+  "star"
 ];
 
-const directions = [
-  "up", "down", "left", "right"
+const objects = [
+  "chair",
+  "table",
+  "lamp",
+  "phone",
+  "book",
+  "backpack",
+  "pencil",
+  "shoe",
+  "bottle",
+  "clock",
+  "computer",
+  "television",
+  "door",
+  "window",
+  "pillow",
+  "keyboard",
+  "mouse",
+  "desk",
+  "cup",
+  "glasses"
+];
+
+const seasons = [
+  "spring",
+  "summer",
+  "fall",
+  "winter"
 ];
 
 const opposites = [
@@ -235,28 +333,12 @@ const opposites = [
   ["near", "far"],
   ["inside", "outside"],
   ["day", "night"],
-  ["before", "after"]
-];
-
-const months = [
-  "January", "February", "March", "April",
-  "May", "June", "July", "August",
-  "September", "October", "November", "December"
-];
-
-const weekdays = [
-  "Monday", "Tuesday", "Wednesday", "Thursday",
-  "Friday", "Saturday", "Sunday"
-];
-
-const seasons = [
-  "spring", "summer", "fall", "winter"
-];
-
-const objects = [
-  "chair", "table", "lamp", "phone", "book",
-  "backpack", "pencil", "shoe", "bottle", "clock",
-  "computer", "television", "door", "window", "pillow"
+  ["before", "after"],
+  ["up", "down"],
+  ["left", "right"],
+  ["loud", "quiet"],
+  ["easy", "difficult"],
+  ["clean", "dirty"]
 ];
 
 const emojis = [
@@ -272,48 +354,112 @@ const emojis = [
   ["🔥", "fire"]
 ];
 
+const games = [
+  "Minecraft",
+  "Roblox",
+  "Fortnite",
+  "Mario Kart",
+  "Tetris",
+  "Pac-Man",
+  "Pokémon",
+  "The Legend of Zelda"
+];
+
+
 /* =========================================================
-   RANDOM NUMBER SYSTEM
+   RANDOM NUMBER GENERATOR
 ========================================================= */
 
 function rng(seed) {
+
   let x = seed >>> 0;
 
   return function() {
+
     x += 0x6D2B79F5;
+
     let t = x;
-    t = Math.imul(t ^ t >>> 15, t | 1);
-    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+
+    t = Math.imul(
+      t ^ (t >>> 15),
+      t | 1
+    );
+
+    t ^= t +
+      Math.imul(
+        t ^ (t >>> 7),
+        t | 61
+      );
+
+    return (
+      (t ^ (t >>> 14)) >>> 0
+    ) / 4294967296;
   };
 }
 
-function pick(arr, random) {
-  return arr[Math.floor(random() * arr.length)];
+
+function pick(array, random) {
+
+  return array[
+    Math.floor(random() * array.length)
+  ];
 }
 
-function shuffle(arr, random) {
-  const copy = [...arr];
 
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
+function shuffle(array, random) {
+
+  const copy = [...array];
+
+  for (
+    let i = copy.length - 1;
+    i > 0;
+    i--
+  ) {
+
+    const j =
+      Math.floor(random() * (i + 1));
+
+    [copy[i], copy[j]] =
+      [copy[j], copy[i]];
   }
 
   return copy;
 }
 
+
 /* =========================================================
-   EXACTLY-ONE-CORRECT ANSWER HELPERS
+   MULTIPLE CHOICE HELPER
+   GUARANTEES EXACTLY ONE CORRECT ANSWER
 ========================================================= */
 
-function makeOptions(correct, pool, random, count = 4) {
-  const unique = [...new Set(pool)].filter(x => x !== correct);
+function makeOptions(
+  correct,
+  wrongAnswers,
+  random,
+  count = 4
+) {
 
-  const wrong = shuffle(unique, random).slice(0, count - 1);
+  /*
+     Remove anything that is identical to the correct answer.
+  */
+
+  const uniqueWrong = [
+    ...new Set(
+      wrongAnswers.filter(
+        answer => String(answer) !== String(correct)
+      )
+    )
+  ];
+
+  const selectedWrong =
+    shuffle(uniqueWrong, random)
+      .slice(0, count - 1);
 
   const options = shuffle(
-    [correct, ...wrong],
+    [
+      correct,
+      ...selectedWrong
+    ],
     random
   );
 
@@ -323,24 +469,49 @@ function makeOptions(correct, pool, random, count = 4) {
   };
 }
 
-/*
-   IMPORTANT:
-   Category questions NEVER choose multiple items from
-   the same category as possible "wrong" answers.
-*/
 
-function categoryQuestion(category, correct, wrongPool, random) {
-  const result = makeOptions(correct, wrongPool, random);
+/* =========================================================
+   CATEGORY QUESTION HELPER
+========================================================= */
+
+function categoryQuestion(
+  category,
+  correct,
+  wrongPool,
+  random
+) {
+
+  /*
+     CRITICAL:
+     wrongPool MUST contain things that are NOT
+     members of the category being asked about.
+  */
+
+  const wrongAnswers = shuffle(
+    wrongPool.filter(
+      item => item !== correct
+    ),
+    random
+  ).slice(0, 3);
+
+  const options = shuffle(
+    [
+      correct,
+      ...wrongAnswers
+    ],
+    random
+  );
 
   return {
     q: `Which one is a ${category}?`,
-    o: result.options,
-    a: result.answer
+    o: options,
+    a: options.indexOf(correct)
   };
 }
 
+
 /* =========================================================
-   QUESTION GENERATORS
+   QUESTION GENERATOR
 ========================================================= */
 
 function generateQuestion(id) {
@@ -351,19 +522,31 @@ function generateQuestion(id) {
 
   const type = id % 30;
 
-  /* -------------------------
-     0. ADDITION
-  ------------------------- */
+
+  /* =======================================================
+     0 — ADDITION
+  ======================================================= */
 
   if (type === 0) {
-    const a = 1 + Math.floor(random() * 50);
-    const b = 1 + Math.floor(random() * 50);
+
+    const a =
+      1 + Math.floor(random() * 50);
+
+    const b =
+      1 + Math.floor(random() * 50);
+
     const correct = a + b;
 
     const result = makeOptions(
       correct,
-      [correct + 1, correct - 1, correct + 2, correct - 2,
-       correct + 5, correct - 5],
+      [
+        correct + 1,
+        correct - 1,
+        correct + 2,
+        correct - 2,
+        correct + 5,
+        correct - 5
+      ],
       random
     );
 
@@ -374,19 +557,31 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     1. SUBTRACTION
-  ------------------------- */
+
+  /* =======================================================
+     1 — SUBTRACTION
+  ======================================================= */
 
   if (type === 1) {
-    const a = 20 + Math.floor(random() * 80);
-    const b = 1 + Math.floor(random() * a);
+
+    const a =
+      20 + Math.floor(random() * 80);
+
+    const b =
+      1 + Math.floor(random() * a);
+
     const correct = a - b;
 
     const result = makeOptions(
       correct,
-      [correct + 1, correct - 1, correct + 2,
-       correct - 2, correct + 5, correct - 5],
+      [
+        correct + 1,
+        correct - 1,
+        correct + 2,
+        correct - 2,
+        correct + 5,
+        correct - 5
+      ],
       random
     );
 
@@ -397,20 +592,31 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     2. MULTIPLICATION
-  ------------------------- */
+
+  /* =======================================================
+     2 — MULTIPLICATION
+  ======================================================= */
 
   if (type === 2) {
-    const a = 2 + Math.floor(random() * 12);
-    const b = 2 + Math.floor(random() * 12);
+
+    const a =
+      2 + Math.floor(random() * 12);
+
+    const b =
+      2 + Math.floor(random() * 12);
+
     const correct = a * b;
 
     const result = makeOptions(
       correct,
-      [correct + a, correct - a,
-       correct + b, correct - b,
-       correct + 1, correct - 1],
+      [
+        correct + a,
+        correct - a,
+        correct + b,
+        correct - b,
+        correct + 1,
+        correct - 1
+      ],
       random
     );
 
@@ -421,20 +627,30 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     3. DIVISION
-  ------------------------- */
+
+  /* =======================================================
+     3 — DIVISION
+  ======================================================= */
 
   if (type === 3) {
-    const b = 2 + Math.floor(random() * 10);
-    const correct = 2 + Math.floor(random() * 12);
+
+    const b =
+      2 + Math.floor(random() * 10);
+
+    const correct =
+      2 + Math.floor(random() * 12);
+
     const a = b * correct;
 
     const result = makeOptions(
       correct,
-      [correct + 1, correct - 1,
-       correct + 2, correct - 2,
-       correct + 5],
+      [
+        correct + 1,
+        correct - 1,
+        correct + 2,
+        correct - 2,
+        correct + 5
+      ],
       random
     );
 
@@ -445,17 +661,27 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     4. DOUBLE
-  ------------------------- */
+
+  /* =======================================================
+     4 — DOUBLE
+  ======================================================= */
 
   if (type === 4) {
-    const n = 2 + Math.floor(random() * 50);
+
+    const n =
+      2 + Math.floor(random() * 50);
+
     const correct = n * 2;
 
     const result = makeOptions(
       correct,
-      [n, n * 3, n + 2, correct + 2, correct - 2],
+      [
+        n,
+        n * 3,
+        n + 2,
+        correct + 2,
+        correct - 2
+      ],
       random
     );
 
@@ -466,19 +692,27 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     5. HALF
-  ------------------------- */
+
+  /* =======================================================
+     5 — HALF
+  ======================================================= */
 
   if (type === 5) {
-    const correct = 2 + Math.floor(random() * 30);
+
+    const correct =
+      2 + Math.floor(random() * 30);
+
     const n = correct * 2;
 
     const result = makeOptions(
       correct,
-      [correct + 1, correct - 1,
-       correct + 2, correct - 2,
-       n],
+      [
+        correct + 1,
+        correct - 1,
+        correct + 2,
+        correct - 2,
+        n
+      ],
       random
     );
 
@@ -489,13 +723,18 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     6. BIGGER NUMBER
-  ------------------------- */
+
+  /* =======================================================
+     6 — BIGGER NUMBER
+  ======================================================= */
 
   if (type === 6) {
-    const a = 10 + Math.floor(random() * 90);
-    const b = a + 1 + Math.floor(random() * 30);
+
+    const a =
+      10 + Math.floor(random() * 90);
+
+    const b =
+      a + 1 + Math.floor(random() * 30);
 
     return {
       q: `Which number is bigger: ${a} or ${b}?`,
@@ -504,13 +743,18 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     7. SMALLER NUMBER
-  ------------------------- */
+
+  /* =======================================================
+     7 — SMALLER NUMBER
+  ======================================================= */
 
   if (type === 7) {
-    const a = 10 + Math.floor(random() * 90);
-    const b = a + 1 + Math.floor(random() * 30);
+
+    const a =
+      10 + Math.floor(random() * 90);
+
+    const b =
+      a + 1 + Math.floor(random() * 30);
 
     return {
       q: `Which number is smaller: ${a} or ${b}?`,
@@ -519,98 +763,163 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     8. NUMBER PATTERN
-  ------------------------- */
+
+  /* =======================================================
+     8 — NUMBER PATTERN
+  ======================================================= */
 
   if (type === 8) {
-    const start = 2 + Math.floor(random() * 20);
-    const step = 2 + Math.floor(random() * 9);
 
-    const nums = [
+    const start =
+      2 + Math.floor(random() * 20);
+
+    const step =
+      2 + Math.floor(random() * 9);
+
+    const numbers = [
       start,
       start + step,
       start + step * 2,
       start + step * 3
     ];
 
-    const correct = start + step * 4;
+    const correct =
+      start + step * 4;
 
     const result = makeOptions(
       correct,
-      [correct + step,
-       correct - step,
-       correct + 1,
-       correct - 1],
+      [
+        correct + step,
+        correct - step,
+        correct + 1,
+        correct - 1
+      ],
       random
     );
 
     return {
-      q: `What comes next? ${nums.join(", ")}, ?`,
+      q: `What comes next? ${numbers.join(", ")}, ?`,
       o: result.options.map(String),
       a: result.answer
     };
   }
 
-  /* -------------------------
-     9. ANIMAL
-  ------------------------- */
+
+  /* =======================================================
+     9 — ANIMAL
+  ======================================================= */
 
   if (type === 9) {
-    const correct = pick(animals, random);
+
+    const correct =
+      pick(animals, random);
+
+    /*
+       IMPORTANT:
+       Foods, objects and shapes are NOT animals.
+    */
+
+    const wrongPool = [
+      ...foods,
+      ...objects,
+      ...shapes
+    ];
 
     return categoryQuestion(
       "animal",
       correct,
-      animals,
+      wrongPool,
       random
     );
   }
 
-  /* -------------------------
-     10. FOOD
-  ------------------------- */
+
+  /* =======================================================
+     10 — FOOD
+  ======================================================= */
 
   if (type === 10) {
-    const correct = pick(foods, random);
+
+    const correct =
+      pick(foods, random);
+
+    /*
+       IMPORTANT:
+       Animals, objects and shapes are NOT foods.
+       So this can NEVER become:
+
+       pizza
+       banana
+       orange
+       hamburger
+
+       when asking "Which one is a food?"
+    */
+
+    const wrongPool = [
+      ...animals,
+      ...objects,
+      ...shapes
+    ];
 
     return categoryQuestion(
       "food",
       correct,
-      foods,
+      wrongPool,
       random
     );
   }
 
-  /* -------------------------
-     11. COUNTRY
-  ------------------------- */
+
+  /* =======================================================
+     11 — COUNTRY
+  ======================================================= */
 
   if (type === 11) {
-    const correct = pick(countries, random);
+
+    const correct =
+      pick(countries, random);
+
+    /*
+       Foods, animals and objects are not countries.
+    */
+
+    const wrongPool = [
+      ...foods,
+      ...animals,
+      ...objects
+    ];
 
     return categoryQuestion(
       "country",
       correct,
-      countries,
+      wrongPool,
       random
     );
   }
 
-  /* -------------------------
-     12. CAPITAL
-  ------------------------- */
+
+  /* =======================================================
+     12 — CAPITAL CITY
+  ======================================================= */
 
   if (type === 12) {
-    const country = pick(countries, random);
-    const correct = capitals[country];
 
-    const otherCapitals = Object.values(capitals)
-      .filter(x => x !== correct);
+    const country =
+      pick(countries, random);
+
+    const correct =
+      capitals[country];
+
+    const wrongPool =
+      Object.values(capitals)
+        .filter(
+          city => city !== correct
+        );
 
     const result = makeOptions(
       correct,
-      otherCapitals,
+      wrongPool,
       random
     );
 
@@ -621,93 +930,121 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     13. VIDEO GAME
-  ------------------------- */
+
+  /* =======================================================
+     13 — VIDEO GAME
+  ======================================================= */
 
   if (type === 13) {
-    const games = [
-      "Minecraft",
-      "Roblox",
-      "Fortnite",
-      "Mario Kart",
-      "Tetris",
-      "Pac-Man",
-      "Pokémon",
-      "The Legend of Zelda"
+
+    const correct =
+      pick(games, random);
+
+    /*
+       Wrong answers are real non-game things.
+    */
+
+    const wrongPool = [
+      "banana",
+      "elephant",
+      "chair",
+      "blue",
+      "triangle",
+      "pencil",
+      "pizza",
+      "bottle",
+      "rabbit",
+      "table"
     ];
 
-    const correct = pick(games, random);
-
-    const result = makeOptions(
+    return categoryQuestion(
+      "video game",
       correct,
-      games,
+      wrongPool,
       random
     );
-
-    return {
-      q: "Which one is a video game?",
-      o: result.options,
-      a: result.answer
-    };
   }
 
-  /* -------------------------
-     14. SHAPE
-  ------------------------- */
+
+  /* =======================================================
+     14 — SHAPE
+  ======================================================= */
 
   if (type === 14) {
-    const correct = pick(shapes, random);
+
+    const correct =
+      pick(shapes, random);
+
+    /*
+       Colors, foods and animals are not shapes.
+    */
+
+    const wrongPool = [
+      ...colors,
+      ...foods,
+      ...animals
+    ];
 
     return categoryQuestion(
       "shape",
       correct,
-      shapes,
+      wrongPool,
       random
     );
   }
 
-  /* -------------------------
-     15. COLOR
-  ------------------------- */
+
+  /* =======================================================
+     15 — COLOR
+  ======================================================= */
 
   if (type === 15) {
 
-    /*
-       FIX:
-       ALL possible answers in this question are NOT colors.
+    const correct =
+      pick(colors, random);
 
-       This means clicking "orange" cannot accidentally be
-       marked wrong because another color was chosen as the
-       hidden correct answer.
+    /*
+       CRITICAL FIX:
+
+       The wrong answers are ONLY animals,
+       objects and shapes.
+
+       Therefore if the question is:
+
+       "Which one is a color?"
+
+       there will NEVER be:
+       orange
+       black
+       blue
+       red
+
+       all together.
+
+       There is exactly ONE color.
     */
 
-    const correct = pick(colors, random);
-
-    const nonColors = [
+    const wrongPool = [
       ...animals,
       ...objects,
       ...shapes
     ];
 
-    const result = makeOptions(
+    return categoryQuestion(
+      "color",
       correct,
-      nonColors,
+      wrongPool,
       random
     );
-
-    return {
-      q: "Which one is a color?",
-      o: result.options,
-      a: result.answer
-    };
   }
 
-  /* -------------------------
-     16. LETTER COUNT
-  ------------------------- */
+
+  /* =======================================================
+     16 — LETTER COUNT
+  ======================================================= */
 
   if (type === 16) {
+
     const words = [
       "apple",
       "banana",
@@ -716,11 +1053,16 @@ function generateQuestion(id) {
       "elephant",
       "pizza",
       "backpack",
-      "triangle"
+      "triangle",
+      "keyboard",
+      "hamburger"
     ];
 
-    const word = pick(words, random);
-    const correct = word.length;
+    const word =
+      pick(words, random);
+
+    const correct =
+      word.length;
 
     const result = makeOptions(
       correct,
@@ -728,7 +1070,8 @@ function generateQuestion(id) {
         correct + 1,
         correct - 1,
         correct + 2,
-        correct - 2
+        correct - 2,
+        correct + 3
       ],
       random
     );
@@ -740,22 +1083,37 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     17. FIRST LETTER
-  ------------------------- */
+
+  /* =======================================================
+     17 — FIRST LETTER
+  ======================================================= */
 
   if (type === 17) {
-    const word = pick(
-      ["apple", "banana", "computer", "elephant",
-       "pizza", "triangle", "robot", "Minecraft"],
-      random
-    );
 
-    const correct = word[0].toUpperCase();
+    const word =
+      pick(
+        [
+          "apple",
+          "banana",
+          "computer",
+          "elephant",
+          "pizza",
+          "triangle",
+          "robot",
+          "Minecraft"
+        ],
+        random
+      );
 
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-      .split("")
-      .filter(x => x !== correct);
+    const correct =
+      word[0].toUpperCase();
+
+    const letters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        .split("")
+        .filter(
+          letter => letter !== correct
+        );
 
     const result = makeOptions(
       correct,
@@ -770,22 +1128,38 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     18. LAST LETTER
-  ------------------------- */
+
+  /* =======================================================
+     18 — LAST LETTER
+  ======================================================= */
 
   if (type === 18) {
-    const word = pick(
-      ["apple", "banana", "computer", "elephant",
-       "pizza", "triangle", "robot", "Minecraft"],
-      random
-    );
 
-    const correct = word[word.length - 1].toUpperCase();
+    const word =
+      pick(
+        [
+          "apple",
+          "banana",
+          "computer",
+          "elephant",
+          "pizza",
+          "triangle",
+          "robot",
+          "Minecraft"
+        ],
+        random
+      );
 
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-      .split("")
-      .filter(x => x !== correct);
+    const correct =
+      word[word.length - 1]
+        .toUpperCase();
+
+    const letters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        .split("")
+        .filter(
+          letter => letter !== correct
+        );
 
     const result = makeOptions(
       correct,
@@ -800,32 +1174,54 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     19. MONTH NUMBER
-  ------------------------- */
+
+  /* =======================================================
+     19 — MONTH NUMBER
+  ======================================================= */
 
   if (type === 19) {
-    const index = Math.floor(random() * 12);
-    const correct = index + 1;
+
+    const monthData = [
+      ["January", 1],
+      ["February", 2],
+      ["March", 3],
+      ["April", 4],
+      ["May", 5],
+      ["June", 6],
+      ["July", 7],
+      ["August", 8],
+      ["September", 9],
+      ["October", 10],
+      ["November", 11],
+      ["December", 12]
+    ];
+
+    const item =
+      pick(monthData, random);
 
     const result = makeOptions(
-      correct,
-      [1,2,3,4,5,6,7,8,9,10,11,12],
+      item[1],
+      [
+        1, 2, 3, 4, 5, 6,
+        7, 8, 9, 10, 11, 12
+      ],
       random
     );
 
     return {
-      q: `What number month is ${months[index]}?`,
+      q: `What number month is ${item[0]}?`,
       o: result.options.map(String),
       a: result.answer
     };
   }
 
-  /* -------------------------
-     20. DAYS IN MONTH
-  ------------------------- */
+
+  /* =======================================================
+     20 — DAYS IN MONTH
+  ======================================================= */
 
   if (type === 20) {
+
     const monthData = [
       ["January", 31],
       ["March", 31],
@@ -840,7 +1236,8 @@ function generateQuestion(id) {
       ["December", 31]
     ];
 
-    const item = pick(monthData, random);
+    const item =
+      pick(monthData, random);
 
     const result = makeOptions(
       item[1],
@@ -855,12 +1252,14 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     21. SEASON
-  ------------------------- */
+
+  /* =======================================================
+     21 — SEASON
+  ======================================================= */
 
   if (type === 21) {
-    const monthsToSeasons = [
+
+    const monthData = [
       ["December", "winter"],
       ["January", "winter"],
       ["February", "winter"],
@@ -875,26 +1274,44 @@ function generateQuestion(id) {
       ["November", "fall"]
     ];
 
-    const item = pick(monthsToSeasons, random);
+    const item =
+      pick(monthData, random);
+
+    const options =
+      shuffle(seasons, random);
 
     return {
       q: `Which season is ${item[0]} usually in?`,
-      o: shuffle(seasons, random),
-      a: seasons.indexOf(item[1])
+      o: options,
+      a: options.indexOf(item[1])
     };
   }
 
-  /* -------------------------
-     22. OPPOSITES
-  ------------------------- */
+
+  /* =======================================================
+     22 — OPPOSITE
+  ======================================================= */
 
   if (type === 22) {
-    const pair = pick(opposites, random);
-    const correct = pair[1];
+
+    const pair =
+      pick(opposites, random);
+
+    const correct =
+      pair[1];
+
+    const wrongPool =
+      opposites
+        .flat()
+        .filter(
+          word =>
+            word !== pair[0] &&
+            word !== correct
+        );
 
     const result = makeOptions(
       correct,
-      opposites.flat(),
+      wrongPool,
       random
     );
 
@@ -905,20 +1322,29 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     23. EMOJI
-  ------------------------- */
+
+  /* =======================================================
+     23 — EMOJI MEANING
+  ======================================================= */
 
   if (type === 23) {
-    const item = pick(emojis, random);
 
-    const meanings = emojis
-      .map(x => x[1])
-      .filter(x => x !== item[1]);
+    const item =
+      pick(emojis, random);
+
+    const correct =
+      item[1];
+
+    const wrongPool =
+      emojis
+        .map(x => x[1])
+        .filter(
+          meaning => meaning !== correct
+        );
 
     const result = makeOptions(
-      item[1],
-      meanings,
+      correct,
+      wrongPool,
       random
     );
 
@@ -929,11 +1355,13 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     24. MEMORY
-  ------------------------- */
+
+  /* =======================================================
+     24 — MEMORY
+  ======================================================= */
 
   if (type === 24) {
+
     const memoryWords = [
       "APPLE",
       "ROBOT",
@@ -942,10 +1370,13 @@ function generateQuestion(id) {
       "PIZZA",
       "CLOUD",
       "STAR",
-      "BANANA"
+      "BANANA",
+      "MINECRAFT",
+      "RAINBOW"
     ];
 
-    const word = pick(memoryWords, random);
+    const word =
+      pick(memoryWords, random);
 
     return {
       q: `Remember this word:`,
@@ -955,15 +1386,18 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     25. LOOK AROUND — COLOR
-  ------------------------- */
+
+  /* =======================================================
+     25 — LOOK AROUND: COLOR
+  ======================================================= */
 
   if (type === 25) {
-    const correct = pick(colors, random);
+
+    const color =
+      pick(colors, random);
 
     return {
-      q: `Look around you. Find something ${correct}.`,
+      q: `Look around you. Find something ${color}.`,
       o: [
         "I found it",
         "I don't see one"
@@ -973,15 +1407,18 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     26. LOOK AROUND — OBJECT
-  ------------------------- */
+
+  /* =======================================================
+     26 — LOOK AROUND: OBJECT
+  ======================================================= */
 
   if (type === 26) {
-    const correct = pick(objects, random);
+
+    const object =
+      pick(objects, random);
 
     return {
-      q: `Look around you. Can you find a ${correct}?`,
+      q: `Look around you. Can you find a ${object}?`,
       o: [
         "Yes",
         "Not right now"
@@ -991,19 +1428,27 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     27. ESTIMATION
-  ------------------------- */
+
+  /* =======================================================
+     27 — ROUNDING
+  ======================================================= */
 
   if (type === 27) {
-    const n = 10 + Math.floor(random() * 90);
 
-    const correct = Math.round(n / 10) * 10;
+    const n =
+      10 + Math.floor(random() * 90);
+
+    const correct =
+      Math.round(n / 10) * 10;
 
     const result = makeOptions(
       correct,
-      [correct - 10, correct + 10,
-       correct - 20, correct + 20],
+      [
+        correct - 10,
+        correct + 10,
+        correct - 20,
+        correct + 20
+      ],
       random
     );
 
@@ -1014,16 +1459,20 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     28. EVEN OR ODD
-  ------------------------- */
+
+  /* =======================================================
+     28 — EVEN OR ODD
+  ======================================================= */
 
   if (type === 28) {
-    const n = 1 + Math.floor(random() * 100);
 
-    const correct = n % 2 === 0
-      ? "Even"
-      : "Odd";
+    const n =
+      1 + Math.floor(random() * 100);
+
+    const correct =
+      n % 2 === 0
+        ? "Even"
+        : "Odd";
 
     return {
       q: `Is ${n} even or odd?`,
@@ -1032,69 +1481,116 @@ function generateQuestion(id) {
     };
   }
 
-  /* -------------------------
-     29. GENERAL KNOWLEDGE
-  ------------------------- */
+
+  /* =======================================================
+     29 — BASIC KNOWLEDGE
+  ======================================================= */
 
   const facts = [
+
     {
       q: "How many sides does a triangle have?",
       correct: "3",
       wrong: ["4", "5", "6"]
     },
+
     {
       q: "How many sides does a square have?",
       correct: "4",
       wrong: ["3", "5", "6"]
     },
+
     {
       q: "Which planet do we live on?",
       correct: "Earth",
       wrong: ["Mars", "Venus", "Jupiter"]
     },
+
     {
       q: "How many legs does a dog usually have?",
       correct: "4",
       wrong: ["2", "6", "8"]
     },
+
     {
       q: "What is 10 × 10?",
       correct: "100",
       wrong: ["10", "20", "1,000"]
     },
+
     {
       q: "How many days are in a week?",
       correct: "7",
       wrong: ["5", "6", "8"]
     },
+
     {
       q: "How many hours are in a day?",
       correct: "24",
       wrong: ["12", "18", "48"]
     },
+
     {
       q: "Which animal is known for having a long trunk?",
       correct: "Elephant",
       wrong: ["Tiger", "Penguin", "Rabbit"]
     },
+
     {
       q: "Which one is a fruit?",
       correct: "Apple",
       wrong: ["Chair", "Pencil", "Shoe"]
     },
+
     {
       q: "Which one is used for writing?",
       correct: "Pencil",
       wrong: ["Banana", "Pillow", "Spoon"]
+    },
+
+    {
+      q: "Which one is normally used to tell time?",
+      correct: "Clock",
+      wrong: ["Chair", "Banana", "Pencil"]
+    },
+
+    {
+      q: "Which one is normally used to sit on?",
+      correct: "Chair",
+      wrong: ["Apple", "Shark", "Triangle"]
+    },
+
+    {
+      q: "Which one can fly?",
+      correct: "Bird",
+      wrong: ["Chair", "Table", "Pencil"]
+    },
+
+    {
+      q: "Which one is normally found in the sky?",
+      correct: "Cloud",
+      wrong: ["Chair", "Spoon", "Shoe"]
+    },
+
+    {
+      q: "Which one is a shape?",
+      correct: "Triangle",
+      wrong: ["Banana", "Dog", "Pencil"]
     }
+
   ];
 
-  const fact = pick(facts, random);
+  const fact =
+    pick(facts, random);
 
-  const options = shuffle(
-    [fact.correct, ...fact.wrong],
-    random
-  );
+  const options =
+    shuffle(
+      [
+        fact.correct,
+        ...fact.wrong
+      ],
+      random
+    );
 
   return {
     q: fact.q,
@@ -1103,131 +1599,217 @@ function generateQuestion(id) {
   };
 }
 
+
 /* =========================================================
-   CARD CREATION
+   CREATE CARD
 ========================================================= */
 
 function createCard(id) {
 
-  const data = generateQuestion(id);
+  const data =
+    generateQuestion(id);
 
-  const card = document.createElement("section");
+  const card =
+    document.createElement("section");
+
   card.className = "card";
 
-  /*
-     Each ID gets its own deterministic background.
-     This makes the feed visually varied without affecting
-     whether an answer is correct.
-  */
+  const random =
+    rng(id * 99991 + 42);
 
-  const random = rng(id * 99991 + 42);
-
-  const hue = Math.floor(random() * 360);
+  const hue =
+    Math.floor(random() * 360);
 
   card.style.background =
-    `linear-gradient(145deg,
+    `linear-gradient(
+      145deg,
       hsl(${hue}, 65%, 18%),
-      hsl(${(hue + 45) % 360}, 60%, 8%))`;
+      hsl(${(hue + 45) % 360}, 60%, 8%)
+    )`;
 
-  const question = document.createElement("div");
-  question.className = "question";
-  question.textContent = data.q;
+
+  /* QUESTION */
+
+  const question =
+    document.createElement("div");
+
+  question.className =
+    "question";
+
+  question.textContent =
+    data.q;
 
   card.appendChild(question);
 
+
+  /* MEMORY WORD */
+
   if (data.memory) {
-    const memory = document.createElement("div");
-    memory.className = "memoryWord";
-    memory.textContent = data.memory;
+
+    const memory =
+      document.createElement("div");
+
+    memory.className =
+      "memoryWord";
+
+    memory.textContent =
+      data.memory;
+
     card.appendChild(memory);
 
-    const note = document.createElement("div");
-    note.className = "lookText";
-    note.textContent = "Try to remember it.";
+    const note =
+      document.createElement("div");
+
+    note.className =
+      "lookText";
+
+    note.textContent =
+      "Try to remember it.";
+
     card.appendChild(note);
   }
 
-  const answers = document.createElement("div");
-  answers.className = "answers";
 
-  data.o.forEach((answer, index) => {
+  /* ANSWERS */
 
-    const button = document.createElement("button");
-    button.className = "answer";
-    button.textContent = answer;
+  const answers =
+    document.createElement("div");
 
-    button.addEventListener("click", () => {
+  answers.className =
+    "answers";
 
-      /*
-         Prevent answering the same question twice.
-      */
 
-      if (card.dataset.answered === "true") {
-        return;
-      }
+  data.o.forEach(
+    (answer, index) => {
 
-      card.dataset.answered = "true";
+      const button =
+        document.createElement("button");
 
-      const buttons = [...answers.children];
+      button.className =
+        "answer";
 
-      buttons.forEach(btn => {
-        btn.classList.add("disabled");
-      });
+      button.textContent =
+        answer;
 
-      const result = document.createElement("div");
-      result.className = "result";
 
-      /*
-         Look-around questions are intentionally subjective.
-         The user only needs to confirm they completed it.
-      */
-
-      if (data.look) {
-
-        if (index === data.a) {
-          button.classList.add("correct");
-          result.textContent = "Nice! 👍";
-          streak++;
-        }
-
-      } else {
-
-        if (index === data.a) {
-
-          button.classList.add("correct");
-          result.textContent = "Correct! ✓";
-          streak++;
-
-        } else {
-
-          button.classList.add("wrong");
+      button.addEventListener(
+        "click",
+        () => {
 
           /*
-             Show the ACTUAL correct button.
-             Because `data.a` is calculated from the final
-             shuffled options, this can never point to the
-             wrong answer.
+             Don't allow multiple answers.
           */
 
-          if (buttons[data.a]) {
-            buttons[data.a].classList.add("correct");
+          if (
+            card.dataset.answered === "true"
+          ) {
+            return;
           }
 
-          result.textContent = "Not quite!";
-          streak = 0;
+          card.dataset.answered =
+            "true";
+
+
+          const buttons =
+            [...answers.children];
+
+
+          buttons.forEach(
+            btn => {
+              btn.classList.add(
+                "disabled"
+              );
+            }
+          );
+
+
+          const result =
+            document.createElement("div");
+
+          result.className =
+            "result";
+
+
+          /* LOOK-AROUND QUESTIONS */
+
+          if (data.look) {
+
+            if (index === data.a) {
+
+              button.classList.add(
+                "correct"
+              );
+
+              result.textContent =
+                "Nice! 👍";
+
+              streak++;
+
+            }
+
+          }
+
+
+          /* NORMAL QUESTIONS */
+
+          else {
+
+            if (index === data.a) {
+
+              button.classList.add(
+                "correct"
+              );
+
+              result.textContent =
+                "Correct! ✓";
+
+              streak++;
+
+            }
+
+            else {
+
+              button.classList.add(
+                "wrong"
+              );
+
+              /*
+                 Because data.a is calculated AFTER
+                 shuffling the answers, this always
+                 highlights the actual correct answer.
+              */
+
+              if (buttons[data.a]) {
+
+                buttons[data.a]
+                  .classList.add(
+                    "correct"
+                  );
+              }
+
+              result.textContent =
+                "Not quite!";
+
+              streak = 0;
+            }
+          }
+
+
+          card.appendChild(result);
         }
-      }
+      );
 
-      card.appendChild(result);
-    });
 
-    answers.appendChild(button);
-  });
+      answers.appendChild(button);
+    }
+  );
+
 
   card.appendChild(answers);
 
   return card;
 }
+
 
 /* =========================================================
    ENDLESS FEED
@@ -1235,13 +1817,11 @@ function createCard(id) {
 
 let generated = 0;
 
-/*
-   Random starting position so the app doesn't always begin
-   with the same questions.
-*/
-
 let startId =
-  Math.floor(Math.random() * TOTAL);
+  Math.floor(
+    Math.random() * TOTAL
+  );
+
 
 function loadBatch() {
 
@@ -1249,16 +1829,20 @@ function loadBatch() {
     return;
   }
 
-  const fragment = document.createDocumentFragment();
+  const fragment =
+    document.createDocumentFragment();
+
 
   for (
     let i = 0;
-    i < BATCH_SIZE && generated < TOTAL;
+    i < BATCH_SIZE &&
+    generated < TOTAL;
     i++
   ) {
 
     const id =
-      (startId + generated) % TOTAL;
+      (startId + generated) %
+      TOTAL;
 
     fragment.appendChild(
       createCard(id)
@@ -1267,6 +1851,7 @@ function loadBatch() {
     generated++;
   }
 
+
   feed.appendChild(fragment);
 
   cleanupCards();
@@ -1274,27 +1859,35 @@ function loadBatch() {
   updateProgress();
 }
 
+
 /* =========================================================
-   PERFORMANCE CLEANUP
+   REMOVE OLD CARDS
 ========================================================= */
 
 function cleanupCards() {
 
-  while (feed.children.length > MAX_DOM_CARDS) {
+  while (
+    feed.children.length >
+    MAX_DOM_CARDS
+  ) {
 
-    const first = feed.firstElementChild;
+    const first =
+      feed.firstElementChild;
 
-    /*
-       Preserve the scroll position when removing old cards.
-    */
-
-    const height = first.offsetHeight;
+    const height =
+      first.offsetHeight;
 
     first.remove();
+
+    /*
+       Keep the user's position from
+       jumping when old cards are removed.
+    */
 
     feed.scrollTop -= height;
   }
 }
+
 
 /* =========================================================
    PROGRESS
@@ -1303,53 +1896,83 @@ function cleanupCards() {
 function updateProgress() {
 
   progressText.textContent =
-    `${Math.min(generated, TOTAL).toLocaleString()} / ${TOTAL.toLocaleString()}`;
+    `${Math.min(
+      generated,
+      TOTAL
+    ).toLocaleString()} / ${TOTAL.toLocaleString()}`;
+
 
   const percentage =
-    Math.min(generated / TOTAL, 1);
+    Math.min(
+      generated / TOTAL,
+      1
+    );
+
 
   progressThumb.style.top =
     `calc(${percentage * 100}% - 35px)`;
 }
 
-/* =========================================================
-   SCROLL LOADING
-========================================================= */
-
-feed.addEventListener("scroll", () => {
-
-  const distanceFromBottom =
-    feed.scrollHeight -
-    feed.scrollTop -
-    feed.clientHeight;
-
-  if (distanceFromBottom < feed.clientHeight * 5) {
-    loadBatch();
-  }
-
-  updateProgress();
-});
-
-/*
-   Safety net so the feed never runs out while swiping.
-*/
-
-setInterval(() => {
-
-  const distanceFromBottom =
-    feed.scrollHeight -
-    feed.scrollTop -
-    feed.clientHeight;
-
-  if (distanceFromBottom < feed.clientHeight * 5) {
-    loadBatch();
-  }
-
-}, 500);
 
 /* =========================================================
-   START
+   LOAD MORE WHEN NEAR BOTTOM
 ========================================================= */
+
+feed.addEventListener(
+  "scroll",
+  () => {
+
+    const distanceFromBottom =
+      feed.scrollHeight -
+      feed.scrollTop -
+      feed.clientHeight;
+
+
+    if (
+      distanceFromBottom <
+      feed.clientHeight * 5
+    ) {
+
+      loadBatch();
+    }
+
+
+    updateProgress();
+  }
+);
+
+
+/* =========================================================
+   SAFETY NET
+========================================================= */
+
+setInterval(
+  () => {
+
+    const distanceFromBottom =
+      feed.scrollHeight -
+      feed.scrollTop -
+      feed.clientHeight;
+
+
+    if (
+      distanceFromBottom <
+      feed.clientHeight * 5
+    ) {
+
+      loadBatch();
+    }
+
+  },
+  500
+);
+
+
+/* =========================================================
+   START GAME
+========================================================= */
+
+let streak = 0;
 
 loadBatch();
 loadBatch();
