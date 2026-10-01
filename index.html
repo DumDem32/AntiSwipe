@@ -440,30 +440,46 @@ if(type === 5){
 
 
   // Food
-  if(type === 6){
+if(type === 6){
 
-    const food = pick(foods, r);
+  const food = pick(foods, r);
 
-    const others = shuffle(
-      foods.filter(x => x !== food),
-      r
-    ).slice(0,3);
+  const others = shuffle(
+    foods.filter(x => x !== food),
+    r
+  ).slice(0,3);
 
-    const opts = shuffle(
-      [food, ...others],
-      r
-    );
+  const opts = shuffle(
+    [food, ...others],
+    r
+  );
 
-    return {
-      e:"🍿",
-      t:"Food",
-      q:`Which one is ${food}?`,
-      o:opts,
-      a:opts.indexOf(food)
-    };
-  }
+  const questions = [
+    "Which one is food?",
+    "Pick the food.",
+    "Which choice is something you can eat?",
+    "Find the food in this list.",
+    "Which one is edible?",
+    "Choose the food.",
+    "Spot the food.",
+    "Which of these can you eat?",
+    "Can you identify the food?",
+    "Which answer is a food?",
+    "Select the food.",
+    "Which option belongs in the food category?",
+    "Find something you could eat.",
+    "Which one is an actual food?",
+    "Which choice would you find on a menu?"
+  ];
 
-
+  return {
+    e:"🍿",
+    t:"Food",
+    q:pick(questions, r),
+    o:opts,
+    a:opts.indexOf(food)
+  };
+}
  // Geography
 if(type === 7){
 
