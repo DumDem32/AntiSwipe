@@ -144,7 +144,6 @@ header{
 <header>
   <div>
     <div>Swipe Break</div>
- 
   </div>
 
   <div id="streak">🔥 0</div>
@@ -178,7 +177,10 @@ const streakEl = document.getElementById("streak");
 const countEl = document.getElementById("count");
 
 
-// Escape text safely
+// ==========================================
+// ESCAPE TEXT SAFELY
+// ==========================================
+
 const esc = s =>
   s.replace(
     /[&<>"']/g,
@@ -192,7 +194,10 @@ const esc = s =>
   );
 
 
-// Deterministic random generator
+// ==========================================
+// DETERMINISTIC RANDOM GENERATOR
+// ==========================================
+
 const rng = seed => {
   let x = (seed + 0x6D2B79F5) >>> 0;
 
@@ -277,477 +282,522 @@ function question(id){
   const type = id % 12;
 
 
- // Math
-if(type === 0){
+  // ========================================
+  // MATH
+  // ========================================
 
-  const n = 2 + Math.floor(r() * 48);
-  const mult = 2 + Math.floor(r() * 9);
+  if(type === 0){
 
-  const ans = n * mult;
+    const n = 2 + Math.floor(r() * 48);
+    const mult = 2 + Math.floor(r() * 9);
 
-  const opts = shuffle([
-    ans,
-    ans + mult,
-    ans - mult,
-    ans + 2 * mult
-  ], r);
+    const ans = n * mult;
 
-  const questions = [
-    `What is ${n} × ${mult}?`,
-    `Solve: ${n} × ${mult}`,
-    `Calculate ${n} times ${mult}.`,
-    `Can you solve ${n} × ${mult}?`,
-    `What's the answer to ${n} × ${mult}?`,
-    `Quick math: ${n} × ${mult} = ?`,
-    `Work this out: ${n} × ${mult}`,
-    `Figure out ${n} × ${mult}.`,
-    `What does ${n} multiplied by ${mult} equal?`,
-    `Solve this multiplication problem: ${n} × ${mult}`
-  ];
+    const opts = shuffle([
+      ans,
+      ans + mult,
+      ans - mult,
+      ans + 2 * mult
+    ], r);
 
-  return {
-    e:"🔢",
-    t:"Fast Math",
-    q:pick(questions, r),
-    o:opts.map(String),
-    a:opts.indexOf(ans)
-  };
-}
+    const questions = [
+      `What is ${n} × ${mult}?`,
+      `Solve: ${n} × ${mult}`,
+      `Calculate ${n} times ${mult}.`,
+      `Can you solve ${n} × ${mult}?`,
+      `What's the answer to ${n} × ${mult}?`,
+      `Quick math: ${n} × ${mult} = ?`,
+      `Work this out: ${n} × ${mult}`,
+      `Figure out ${n} × ${mult}.`,
+      `What does ${n} multiplied by ${mult} equal?`,
+      `Solve this multiplication problem: ${n} × ${mult}`
+    ];
 
-  // Addition
-if(type === 1){
-
-  const n = 5 + Math.floor(r() * 95);
-  const add = 5 + Math.floor(r() * 95);
-
-  const ans = n + add;
-
-  const opts = shuffle([
-    ans,
-    ans + 1,
-    ans - 1,
-    ans + 10
-  ], r);
-
-  const questions = [
-    `What is ${n} + ${add}?`,
-    `Solve: ${n} + ${add}`,
-    `Calculate ${n} plus ${add}.`,
-    `Can you solve ${n} + ${add}?`,
-    `What's the answer to ${n} + ${add}?`,
-    `Quick math: ${n} + ${add} = ?`,
-    `Work this out: ${n} + ${add}`,
-    `Figure out ${n} + ${add}.`,
-    `What does ${n} plus ${add} equal?`,
-    `Solve this addition problem: ${n} + ${add}`
-  ];
-
-  return {
-    e:"➕",
-    t:"Number Puzzle",
-    q:pick(questions, r),
-    o:opts.map(String),
-    a:opts.indexOf(ans)
-  };
-}
-
-// Subtraction
-if(type === 2){
-
-  const n = 20 + Math.floor(r() * 80);
-  const sub = 2 + Math.floor(r() * 18);
-
-  const ans = n - sub;
-
-  const opts = shuffle([
-    ans,
-    ans + sub,
-    ans - 1,
-    ans + 10
-  ], r);
-
-  const questions = [
-    `What is ${n} − ${sub}?`,
-    `Solve: ${n} − ${sub}`,
-    `Calculate ${n} minus ${sub}.`,
-    `Can you solve ${n} − ${sub}?`,
-    `What's the answer to ${n} − ${sub}?`,
-    `Quick math: ${n} − ${sub} = ?`,
-    `Work this out: ${n} − ${sub}`,
-    `Figure out ${n} − ${sub}.`,
-    `What does ${n} minus ${sub} equal?`,
-    `Solve this subtraction problem: ${n} − ${sub}`
-  ];
-
-  return {
-    e:"➖",
-    t:"Number Puzzle",
-    q:pick(questions, r),
-    o:opts.map(String),
-    a:opts.indexOf(ans)
-  };
-}
-
-  // Multiplication
-if(type === 3){
-
-  const a = 2 + Math.floor(r() * 20);
-  const b = 2 + Math.floor(r() * 20);
-
-  const ans = a * b;
-
-  const opts = shuffle([
-    ans,
-    ans + a,
-    ans - b,
-    ans + 10
-  ], r);
-
-  const questions = [
-    `What is ${a} × ${b}?`,
-    `Solve: ${a} × ${b}`,
-    `Calculate ${a} times ${b}.`,
-    `Can you solve ${a} × ${b}?`,
-    `What's the answer to ${a} × ${b}?`,
-    `Quick math: ${a} × ${b} = ?`,
-    `Work this out: ${a} × ${b}`,
-    `Figure out ${a} × ${b}.`,
-    `What does ${a} multiplied by ${b} equal?`,
-    `Solve this multiplication problem: ${a} × ${b}`
-  ];
-
-  return {
-    e:"✖️",
-    t:"Math",
-    q:pick(questions, r),
-    o:opts.map(String),
-    a:opts.indexOf(ans)
-  };
-}
+    return {
+      e:"🔢",
+      t:"Fast Math",
+      q:pick(questions, r),
+      o:opts.map(String),
+      a:opts.indexOf(ans)
+    };
+  }
 
 
- // Look around
-if(type === 4){
+  // ========================================
+  // ADDITION
+  // ========================================
 
-  const color = pick(colors, r);
+  if(type === 1){
 
-  const opts = shuffle([
-    color,
-    "something else",
-    "nothing",
-    "two colors"
-  ], r);
+    const n = 5 + Math.floor(r() * 95);
+    const add = 5 + Math.floor(r() * 95);
 
-  const questions = [
-    `Look around you. Can you find something ${color}?`,
-    `Find something ${color} around you.`,
-    `Can you spot something ${color}?`,
-    `Look around. Is there anything ${color} nearby?`,
-    `Find a ${color} object around you.`,
-    `Take a look around. Can you see something ${color}?`,
-    `Spot something ${color} near you.`,
-    `Look around your surroundings. Can you find ${color}?`,
-    `Can you see anything ${color} right now?`,
-    `Find something that is ${color}.`,
-    `Look around you for something ${color}.`,
-    `Is there a ${color} object you can see?`,
-    `Scan the area around you. Can you spot ${color}?`,
-    `Look nearby. Can you find something ${color}?`,
-    `Find a ${color} thing in your surroundings.`
-  ];
+    const ans = n + add;
 
-  return {
-    e:"👀",
-    t:"Look Around",
-    q:pick(questions, r),
-    o:opts,
-    a:null
-  };
-}
+    const opts = shuffle([
+      ans,
+      ans + 1,
+      ans - 1,
+      ans + 10
+    ], r);
 
- // Animals
-if(type === 5){
+    const questions = [
+      `What is ${n} + ${add}?`,
+      `Solve: ${n} + ${add}`,
+      `Calculate ${n} plus ${add}.`,
+      `Can you solve ${n} + ${add}?`,
+      `What's the answer to ${n} + ${add}?`,
+      `Quick math: ${n} + ${add} = ?`,
+      `Work this out: ${n} + ${add}`,
+      `Figure out ${n} + ${add}.`,
+      `What does ${n} plus ${add} equal?`,
+      `Solve this addition problem: ${n} + ${add}`
+    ];
 
-  const animal = pick(animals, r);
-
-  const others = shuffle(
-    animals.filter(x => x !== animal),
-    r
-  ).slice(0,3);
-
-  const opts = shuffle(
-    [animal, ...others],
-    r
-  );
-
-  const questions = [
-    "Which of these is an animal?",
-    "Pick the animal.",
-    "Which choice is an animal?",
-    "Find the animal in this list.",
-    "Which one is a real animal?",
-    "Choose the animal.",
-    "Spot the animal.",
-    "Which of these creatures is an animal?",
-    "Can you identify the animal?",
-    "Which answer is an animal?",
-    "Select the animal.",
-    "Which creature belongs in the animal category?",
-    "Find the animal.",
-    "Which option is a living animal?",
-    "Which one is an actual animal?"
-  ];
-
-  return {
-    e:"🐾",
-    t:"Animals",
-    q:pick(questions, r),
-    o:opts,
-    a:opts.indexOf(animal)
-  };
-}
+    return {
+      e:"➕",
+      t:"Number Puzzle",
+      q:pick(questions, r),
+      o:opts.map(String),
+      a:opts.indexOf(ans)
+    };
+  }
 
 
-  // Food
-if(type === 6){
+  // ========================================
+  // SUBTRACTION
+  // ========================================
 
-  const food = pick(foods, r);
+  if(type === 2){
 
-  const others = shuffle(
-    foods.filter(x => x !== food),
-    r
-  ).slice(0,3);
+    const n = 20 + Math.floor(r() * 80);
+    const sub = 2 + Math.floor(r() * 18);
 
-  const opts = shuffle(
-    [food, ...others],
-    r
-  );
+    const ans = n - sub;
 
-  const questions = [
-    "Which one is food?",
-    "Pick the food.",
-    "Which choice is something you can eat?",
-    "Find the food in this list.",
-    "Which one is edible?",
-    "Choose the food.",
-    "Spot the food.",
-    "Which of these can you eat?",
-    "Can you identify the food?",
-    "Which answer is a food?",
-    "Select the food.",
-    "Which option belongs in the food category?",
-    "Find something you could eat.",
-    "Which one is an actual food?",
-    "Which choice would you find on a menu?"
-  ];
+    const opts = shuffle([
+      ans,
+      ans + sub,
+      ans - 1,
+      ans + 10
+    ], r);
 
-  return {
-    e:"🍿",
-    t:"Food",
-    q:pick(questions, r),
-    o:opts,
-    a:opts.indexOf(food)
-  };
-}
- // Geography
-if(type === 7){
+    const questions = [
+      `What is ${n} − ${sub}?`,
+      `Solve: ${n} − ${sub}`,
+      `Calculate ${n} minus ${sub}.`,
+      `Can you solve ${n} − ${sub}?`,
+      `What's the answer to ${n} − ${sub}?`,
+      `Quick math: ${n} − ${sub} = ?`,
+      `Work this out: ${n} − ${sub}`,
+      `Figure out ${n} − ${sub}.`,
+      `What does ${n} minus ${sub} equal?`,
+      `Solve this subtraction problem: ${n} − ${sub}`
+    ];
 
-  const country = pick(countries, r);
+    return {
+      e:"➖",
+      t:"Number Puzzle",
+      q:pick(questions, r),
+      o:opts.map(String),
+      a:opts.indexOf(ans)
+    };
+  }
 
-  const opts = shuffle([
-    country,
-    ...shuffle(
-      countries.filter(x => x !== country),
+
+  // ========================================
+  // MULTIPLICATION
+  // ========================================
+
+  if(type === 3){
+
+    const a = 2 + Math.floor(r() * 20);
+    const b = 2 + Math.floor(r() * 20);
+
+    const ans = a * b;
+
+    const opts = shuffle([
+      ans,
+      ans + a,
+      ans - b,
+      ans + 10
+    ], r);
+
+    const questions = [
+      `What is ${a} × ${b}?`,
+      `Solve: ${a} × ${b}`,
+      `Calculate ${a} times ${b}.`,
+      `Can you solve ${a} × ${b}?`,
+      `What's the answer to ${a} × ${b}?`,
+      `Quick math: ${a} × ${b} = ?`,
+      `Work this out: ${a} × ${b}`,
+      `Figure out ${a} × ${b}.`,
+      `What does ${a} multiplied by ${b} equal?`,
+      `Solve this multiplication problem: ${a} × ${b}`
+    ];
+
+    return {
+      e:"✖️",
+      t:"Math",
+      q:pick(questions, r),
+      o:opts.map(String),
+      a:opts.indexOf(ans)
+    };
+  }
+
+
+  // ========================================
+  // LOOK AROUND
+  // ========================================
+
+  if(type === 4){
+
+    const color = pick(colors, r);
+
+    const opts = shuffle([
+      color,
+      "something else",
+      "nothing",
+      "two colors"
+    ], r);
+
+    const questions = [
+      `Look around you. Can you find something ${color}?`,
+      `Find something ${color} around you.`,
+      `Can you spot something ${color}?`,
+      `Look around. Is there anything ${color} nearby?`,
+      `Find a ${color} object around you.`,
+      `Take a look around. Can you see something ${color}?`,
+      `Spot something ${color} near you.`,
+      `Look around your surroundings. Can you find ${color}?`,
+      `Can you see anything ${color} right now?`,
+      `Find something that is ${color}.`,
+      `Look around you for something ${color}.`,
+      `Is there a ${color} object you can see?`,
+      `Scan the area around you. Can you spot ${color}?`,
+      `Look nearby. Can you find something ${color}?`,
+      `Find a ${color} thing in your surroundings.`
+    ];
+
+    return {
+      e:"👀",
+      t:"Look Around",
+      q:pick(questions, r),
+      o:opts,
+      a:null
+    };
+  }
+
+
+  // ========================================
+  // ANIMALS
+  // ========================================
+
+  if(type === 5){
+
+    const animal = pick(animals, r);
+
+    const others = shuffle(
+      animals.filter(x => x !== animal),
       r
-    ).slice(0,3)
-  ], r);
+    ).slice(0,3);
 
-  const questions = [
-    "Which of these is a country?",
-    "Pick the country.",
-    "Which choice names a country?",
-    "Find the country in this list.",
-    "Which answer is a real country?",
-    "Choose the country.",
-    "Which one is a country?",
-    "Spot the country.",
-    "Which option belongs on a world map?",
-    "Which place is a country?",
-    "Can you identify the country?",
-    "Which of these places is a country?",
-    "Select the country.",
-    "Which answer represents a country?",
-    "Find the country."
-  ];
-
-  return {
-    e:"🌎",
-    t:"Geography",
-    q:pick(questions, r),
-    o:opts,
-    a:opts.indexOf(country)
-  };
-} 
-
-  // Gaming
-if(type === 8){
-
-  const game = pick(games, r);
-
-  const opts = shuffle([
-    game,
-    ...shuffle(
-      games.filter(x => x !== game),
+    const opts = shuffle(
+      [animal, ...others],
       r
-    ).slice(0,3)
-  ], r);
+    );
 
-  const questions = [
-    "Which of these is a video game?",
-    "Pick the video game.",
-    "Which choice is a real game?",
-    "Find the game in this list.",
-    "Which one is a video game?",
-    "Choose the game.",
-    "Spot the video game.",
-    "Which of these games is real?",
-    "Can you identify the video game?",
-    "Which answer is a game?",
-    "Select the video game.",
-    "Which option is an actual game?",
-    "Find the game.",
-    "Which one belongs in the gaming category?",
-    "Which choice is something you can play?"
-  ];
+    const questions = [
+      "Which of these is an animal?",
+      "Pick the animal.",
+      "Which choice is an animal?",
+      "Find the animal in this list.",
+      "Which one is a real animal?",
+      "Choose the animal.",
+      "Spot the animal.",
+      "Which of these creatures is an animal?",
+      "Can you identify the animal?",
+      "Which answer is an animal?",
+      "Select the animal.",
+      "Which creature belongs in the animal category?",
+      "Find the animal.",
+      "Which option is a living animal?",
+      "Which one is an actual animal?"
+    ];
 
-  return {
-    e:"🎮",
-    t:"Gaming",
-    q:pick(questions, r),
-    o:opts,
-    a:opts.indexOf(game)
-  };
-}
+    return {
+      e:"🐾",
+      t:"Animals",
+      q:pick(questions, r),
+      o:opts,
+      a:opts.indexOf(animal)
+    };
+  }
 
- // Memory
-if(type === 9){
 
-  const seq = [
-    pick(emojis,r),
-    pick(emojis,r),
-    pick(emojis,r)
-  ];
+  // ========================================
+  // FOOD
+  // ========================================
 
-  const target = seq[1];
+  if(type === 6){
 
-  const wrong = emojis.filter(x => x !== target);
+    const food = pick(foods, r);
+
+    const others = shuffle(
+      foods.filter(x => x !== food),
+      r
+    ).slice(0,3);
+
+    const opts = shuffle(
+      [food, ...others],
+      r
+    );
+
+    const questions = [
+      "Which one is food?",
+      "Pick the food.",
+      "Which choice is something you can eat?",
+      "Find the food in this list.",
+      "Which one is edible?",
+      "Choose the food.",
+      "Spot the food.",
+      "Which of these can you eat?",
+      "Can you identify the food?",
+      "Which answer is a food?",
+      "Select the food.",
+      "Which option belongs in the food category?",
+      "Find something you could eat.",
+      "Which one is an actual food?",
+      "Which choice would you find on a menu?"
+    ];
+
+    return {
+      e:"🍿",
+      t:"Food",
+      q:pick(questions, r),
+      o:opts,
+      a:opts.indexOf(food)
+    };
+  }
+
+
+  // ========================================
+  // GEOGRAPHY
+  // ========================================
+
+  if(type === 7){
+
+    const country = pick(countries, r);
+
+    const opts = shuffle([
+      country,
+      ...shuffle(
+        countries.filter(x => x !== country),
+        r
+      ).slice(0,3)
+    ], r);
+
+    const questions = [
+      "Which of these is a country?",
+      "Pick the country.",
+      "Which choice names a country?",
+      "Find the country in this list.",
+      "Which answer is a real country?",
+      "Choose the country.",
+      "Which one is a country?",
+      "Spot the country.",
+      "Which option belongs on a world map?",
+      "Which place is a country?",
+      "Can you identify the country?",
+      "Which of these places is a country?",
+      "Select the country.",
+      "Which answer represents a country?",
+      "Find the country."
+    ];
+
+    return {
+      e:"🌎",
+      t:"Geography",
+      q:pick(questions, r),
+      o:opts,
+      a:opts.indexOf(country)
+    };
+  }
+
+
+  // ========================================
+  // GAMING
+  // ========================================
+
+  if(type === 8){
+
+    const game = pick(games, r);
+
+    const opts = shuffle([
+      game,
+      ...shuffle(
+        games.filter(x => x !== game),
+        r
+      ).slice(0,3)
+    ], r);
+
+    const questions = [
+      "Which of these is a video game?",
+      "Pick the video game.",
+      "Which choice is a real game?",
+      "Find the game in this list.",
+      "Which one is a video game?",
+      "Choose the game.",
+      "Spot the video game.",
+      "Which of these games is real?",
+      "Can you identify the video game?",
+      "Which answer is a game?",
+      "Select the video game.",
+      "Which option is an actual game?",
+      "Find the game.",
+      "Which one belongs in the gaming category?",
+      "Which choice is something you can play?"
+    ];
+
+    return {
+      e:"🎮",
+      t:"Gaming",
+      q:pick(questions, r),
+      o:opts,
+      a:opts.indexOf(game)
+    };
+  }
+
+
+  // ========================================
+  // MEMORY
+  // ========================================
+
+  if(type === 9){
+
+    const seq = [
+      pick(emojis,r),
+      pick(emojis,r),
+      pick(emojis,r)
+    ];
+
+    const target = seq[1];
+
+    const wrong = emojis.filter(x => x !== target);
+
+    const opts = shuffle([
+      target,
+      pick(wrong,r),
+      pick(wrong,r),
+      pick(wrong,r)
+    ], r);
+
+    const questions = [
+      `Remember: ${seq.join(" ")}. Which emoji was second?`,
+      `Look closely: ${seq.join(" ")}. What was the middle emoji?`,
+      `Memorize ${seq.join(" ")}. Which appeared second?`,
+      `Remember this sequence: ${seq.join(" ")}. Pick the second emoji.`,
+      `Which emoji was in the middle? ${seq.join(" ")}`,
+      `Study this: ${seq.join(" ")}. What was the second emoji?`,
+      `Which emoji came second? ${seq.join(" ")}`,
+      `Remember the order: ${seq.join(" ")}. Choose the middle one.`,
+      `What was the second emoji in ${seq.join(" ")}?`,
+      `Can you remember ${seq.join(" ")}? Pick the second one.`
+    ];
+
+    return {
+      e:"🧠",
+      t:"Memory",
+      q:pick(questions, r),
+      o:opts,
+      a:opts.indexOf(target)
+    };
+  }
+
+
+  // ========================================
+  // WORD PUZZLE
+  // ========================================
+
+  if(type === 10){
+
+    const word = pick(words, r);
+
+    const scrambled = shuffle([...word], r).join("");
+
+    const wrong = words.filter(x => x !== word);
+
+    const opts = shuffle([
+      word,
+      pick(wrong,r),
+      pick(wrong,r),
+      pick(wrong,r)
+    ], r);
+
+    const questions = [
+      `Unscramble: ${scrambled}`,
+      `Can you unscramble ${scrambled}?`,
+      `What word does ${scrambled} make?`,
+      `Solve this scrambled word: ${scrambled}`,
+      `Figure out the word: ${scrambled}`,
+      `Which answer matches ${scrambled}?`,
+      `Decode this word: ${scrambled}`,
+      `Put these letters in order: ${scrambled}`,
+      `What word is hidden in ${scrambled}?`,
+      `Can you solve ${scrambled}?`,
+      `Identify the scrambled word: ${scrambled}`,
+      `Which word can be made from ${scrambled}?`
+    ];
+
+    return {
+      e:"🔤",
+      t:"Word Puzzle",
+      q:pick(questions, r),
+      o:opts,
+      a:opts.indexOf(word)
+    };
+  }
+
+
+  // ========================================
+  // RANDOM NUMBER
+  // ========================================
+
+  const target = 1 + Math.floor(r() * 10);
 
   const opts = shuffle([
-    target,
-    pick(wrong,r),
-    pick(wrong,r),
-    pick(wrong,r)
+    String(target),
+    String((target % 10) + 1),
+    String(Math.max(1,target - 1)),
+    String(((target + 4) % 10) + 1)
   ], r);
 
   const questions = [
-    `Remember: ${seq.join(" ")}. Which emoji was second?`,
-    `Look closely: ${seq.join(" ")}. What was the middle emoji?`,
-    `Memorize ${seq.join(" ")}. Which appeared second?`,
-    `Remember this sequence: ${seq.join(" ")}. Pick the second emoji.`,
-    `Which emoji was in the middle? ${seq.join(" ")}`,
-    `Study this: ${seq.join(" ")}. What was the second emoji?`,
-    `Which emoji came second? ${seq.join(" ")}`,
-    `Remember the order: ${seq.join(" ")}. Choose the middle one.`,
-    `What was the second emoji in ${seq.join(" ")}?`,
-    `Can you remember ${seq.join(" ")}? Pick the second one.`
+    "Pick a number from 1–10. Which number did the app choose?",
+    "Can you guess the secret number?",
+    "Which number is the app thinking of?",
+    "What number did the app secretly pick?",
+    "Try to predict the app's number.",
+    "Which number was randomly selected?",
+    "Guess the hidden number from 1–10.",
+    "What number is hiding behind this challenge?",
+    "Can you predict the random number?",
+    "Which number did the app choose this time?",
+    "Take a guess. What number was picked?",
+    "Which number is the secret choice?",
+    "Guess what number the app selected.",
+    "What number did the randomizer pick?",
+    "Can you figure out the app's number?"
   ];
 
   return {
-    e:"🧠",
-    t:"Memory",
+    e:"🎲",
+    t:"Prediction",
     q:pick(questions, r),
     o:opts,
-    a:opts.indexOf(target)
+    a:opts.indexOf(String(target))
   };
 }
-
-
- // Word
-if(type === 10){
-
-  const word = pick(words, r);
-
-  const scrambled = shuffle([...word], r).join("");
-
-  const wrong = words.filter(x => x !== word);
-
-  const opts = shuffle([
-    word,
-    pick(wrong,r),
-    pick(wrong,r),
-    pick(wrong,r)
-  ], r);
-
-  const questions = [
-    `Unscramble: ${scrambled}`,
-    `Can you unscramble ${scrambled}?`,
-    `What word does ${scrambled} make?`,
-    `Solve this scrambled word: ${scrambled}`,
-    `Figure out the word: ${scrambled}`,
-    `Which answer matches ${scrambled}?`,
-    `Decode this word: ${scrambled}`,
-    `Put these letters in order: ${scrambled}`,
-    `What word is hidden in ${scrambled}?`,
-    `Can you solve ${scrambled}?`,
-    `Identify the scrambled word: ${scrambled}`,
-    `Which word can be made from ${scrambled}?`
-  ];
-
-  return {
-    e:"🔤",
-    t:"Word Puzzle",
-    q:pick(questions, r),
-    o:opts,
-    a:opts.indexOf(word)
-  };
-}
-
-
-  // Random number
-const target = 1 + Math.floor(r() * 10);
-
-const opts = shuffle([
-  String(target),
-  String((target % 10) + 1),
-  String(Math.max(1,target - 1)),
-  String(((target + 4) % 10) + 1)
-], r);
-
-const questions = [
-  "Pick a number from 1–10. Which number did the app choose?",
-  "Can you guess the secret number?",
-  "Which number is the app thinking of?",
-  "What number did the app secretly pick?",
-  "Try to predict the app's number.",
-  "Which number was randomly selected?",
-  "Guess the hidden number from 1–10.",
-  "What number is hiding behind this challenge?",
-  "Can you predict the random number?",
-  "Which number did the app choose this time?",
-  "Take a guess. What number was picked?",
-  "Which number is the secret choice?",
-  "Guess what number the app selected.",
-  "What number did the randomizer pick?",
-  "Can you figure out the app's number?"
-];
-
-return {
-  e:"🎲",
-  t:"Prediction",
-  q:pick(questions, r),
-  o:opts,
-  a:opts.indexOf(String(target))
-};
 
 
 // ==========================================
@@ -757,6 +807,19 @@ return {
 function makeCard(id){
 
   const d = question(id);
+
+  // Create a unique fingerprint for this challenge
+  const fingerprint =
+    d.t + "|" +
+    d.q + "|" +
+    d.o.join("|");
+
+  // Skip if this exact challenge was already shown
+  if(seenChallenges.has(fingerprint)){
+    return false;
+  }
+
+  seenChallenges.add(fingerprint);
 
   const card = document.createElement("section");
   card.className = "card";
@@ -818,6 +881,8 @@ function makeCard(id){
 
   card.appendChild(inner);
   feed.appendChild(card);
+
+  return true;
 }
 
 
@@ -843,9 +908,6 @@ function addBatch(){
 
     generated++;
   }
-
-
- 
 }
 
 
@@ -888,13 +950,11 @@ feed.addEventListener(
   },
   {passive:true}
 );
+
+
 // ==========================================
 // EXTRA SAFETY NET
 // ==========================================
-
-// If the page gets resized or the browser
-// changes its viewport, make sure there is
-// always enough content.
 
 window.addEventListener("resize", () => {
 
