@@ -662,23 +662,40 @@ if(type === 10){
 
 
   // Random number
-  const target = 1 + Math.floor(r() * 10);
+const target = 1 + Math.floor(r() * 10);
 
-  const opts = shuffle([
-    String(target),
-    String((target % 10) + 1),
-    String(Math.max(1,target - 1)),
-    String(((target + 4) % 10) + 1)
-  ], r);
+const opts = shuffle([
+  String(target),
+  String((target % 10) + 1),
+  String(Math.max(1,target - 1)),
+  String(((target + 4) % 10) + 1)
+], r);
 
-  return {
-    e:"🎲",
-    t:"Prediction",
-    q:"Pick a number from 1–10. Which number did the app secretly choose?",
-    o:opts,
-    a:opts.indexOf(String(target))
-  };
-}
+const questions = [
+  "Pick a number from 1–10. Which number did the app choose?",
+  "Can you guess the secret number?",
+  "Which number is the app thinking of?",
+  "What number did the app secretly pick?",
+  "Try to predict the app's number.",
+  "Which number was randomly selected?",
+  "Guess the hidden number from 1–10.",
+  "What number is hiding behind this challenge?",
+  "Can you predict the random number?",
+  "Which number did the app choose this time?",
+  "Take a guess. What number was picked?",
+  "Which number is the secret choice?",
+  "Guess what number the app selected.",
+  "What number did the randomizer pick?",
+  "Can you figure out the app's number?"
+];
+
+return {
+  e:"🎲",
+  t:"Prediction",
+  q:pick(questions, r),
+  o:opts,
+  a:opts.indexOf(String(target))
+};
 
 
 // ==========================================
