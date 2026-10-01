@@ -560,34 +560,47 @@ if(type === 8){
   };
 }
 
-  // Memory
-  if(type === 9){
+ // Memory
+if(type === 9){
 
-    const seq = [
-      pick(emojis,r),
-      pick(emojis,r),
-      pick(emojis,r)
-    ];
+  const seq = [
+    pick(emojis,r),
+    pick(emojis,r),
+    pick(emojis,r)
+  ];
 
-    const target = seq[1];
+  const target = seq[1];
 
-    const wrong = emojis.filter(x => x !== target);
+  const wrong = emojis.filter(x => x !== target);
 
-    const opts = shuffle([
-      target,
-      pick(wrong,r),
-      pick(wrong,r),
-      pick(wrong,r)
-    ], r);
+  const opts = shuffle([
+    target,
+    pick(wrong,r),
+    pick(wrong,r),
+    pick(wrong,r)
+  ], r);
 
-    return {
-      e:"🧠",
-      t:"Memory",
-      q:`Remember: ${seq.join(" ")}. Which emoji was second?`,
-      o:opts,
-      a:opts.indexOf(target)
-    };
-  }
+  const questions = [
+    `Remember: ${seq.join(" ")}. Which emoji was second?`,
+    `Look closely: ${seq.join(" ")}. What was the middle emoji?`,
+    `Memorize ${seq.join(" ")}. Which appeared second?`,
+    `Remember this sequence: ${seq.join(" ")}. Pick the second emoji.`,
+    `Which emoji was in the middle? ${seq.join(" ")}`,
+    `Study this: ${seq.join(" ")}. What was the second emoji?`,
+    `Which emoji came second? ${seq.join(" ")}`,
+    `Remember the order: ${seq.join(" ")}. Choose the middle one.`,
+    `What was the second emoji in ${seq.join(" ")}?`,
+    `Can you remember ${seq.join(" ")}? Pick the second one.`
+  ];
+
+  return {
+    e:"🧠",
+    t:"Memory",
+    q:pick(questions, r),
+    o:opts,
+    a:opts.indexOf(target)
+  };
+}
 
 
   // Word
