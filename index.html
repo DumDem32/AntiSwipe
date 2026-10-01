@@ -603,30 +603,45 @@ if(type === 9){
 }
 
 
-  // Word
-  if(type === 10){
+ // Word
+if(type === 10){
 
-    const word = pick(words, r);
+  const word = pick(words, r);
 
-    const scrambled = shuffle([...word], r).join("");
+  const scrambled = shuffle([...word], r).join("");
 
-    const wrong = words.filter(x => x !== word);
+  const wrong = words.filter(x => x !== word);
 
-    const opts = shuffle([
-      word,
-      pick(wrong,r),
-      pick(wrong,r),
-      pick(wrong,r)
-    ], r);
+  const opts = shuffle([
+    word,
+    pick(wrong,r),
+    pick(wrong,r),
+    pick(wrong,r)
+  ], r);
 
-    return {
-      e:"🔤",
-      t:"Word Puzzle",
-      q:`Unscramble: ${scrambled}`,
-      o:opts,
-      a:opts.indexOf(word)
-    };
-  }
+  const questions = [
+    `Unscramble: ${scrambled}`,
+    `Can you unscramble ${scrambled}?`,
+    `What word does ${scrambled} make?`,
+    `Solve this scrambled word: ${scrambled}`,
+    `Figure out the word: ${scrambled}`,
+    `Which answer matches ${scrambled}?`,
+    `Decode this word: ${scrambled}`,
+    `Put these letters in order: ${scrambled}`,
+    `What word is hidden in ${scrambled}?`,
+    `Can you solve ${scrambled}?`,
+    `Identify the scrambled word: ${scrambled}`,
+    `Which word can be made from ${scrambled}?`
+  ];
+
+  return {
+    e:"🔤",
+    t:"Word Puzzle",
+    q:pick(questions, r),
+    o:opts,
+    a:opts.indexOf(word)
+  };
+}
 
 
   // Random number
